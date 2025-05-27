@@ -1,0 +1,115 @@
+{% load static %}
+
+<div class="block4">
+	
+ <div class="sliding-block" id="slides">
+	
+	<div class="block4_0" >
+
+		<div class="block4_1">
+													<p class="imgvpr"></p>
+		</div>
+
+
+
+
+
+		<div class="block4_2">
+
+											Промышленное производство памятников.
+Kaк обрезаются необработанные камни на нашем производстве.
+		</div>
+		
+
+
+	</div>
+	
+	
+	<div class="block4_0" >
+
+		<div class="block4_1">
+													<p class="imgvpr"></p>
+		</div>
+
+
+
+
+
+		<div class="block4_2">
+
+											Промышленное производство памятников.
+Kaк обрезаются необработанные камни на нашем производстве.
+		</div>
+		
+
+
+	</div>
+	
+	<div class="block4_0" >
+
+		<div class="block4_1">
+													<p class="imgvpr"></p>
+		</div>
+
+
+
+
+
+		<div class="block4_2">
+
+											Промышленное производство памятников.
+Kaк обрезаются необработанные камни на нашем производстве.
+		</div>
+		
+
+
+	</div>
+	</div>
+		
+	
+	
+	
+	
+	
+	
+	
+<div class="kn0">
+    <a class="block4_3" id="b1" onclick="goToSlide(0, this)">
+        <div class="knd act"></div>
+    </a>
+    <a class="block4_3" id="b2" onclick="goToSlide(1, this)">
+        <div class="knd"></div>
+    </a>
+    <a class="block4_3" id="b3" onclick="goToSlide(2, this)">
+        <div class="knd"></div>
+    </a>
+</div>
+
+
+
+
+
+<script src="{% static 'main/js/script.js' %}"></script>
+	
+ <script>
+ const slides = document.getElementById('slides');
+const totalSlides = document.querySelectorAll('.slide').length;
+
+function goToSlide(index, button) {
+    const offset = -index * 60; // Calculate offset in vw
+    slides.style.transform = `translateX(${offset}vw)`;
+
+    // Удаляем класс 'act' у всех кнопок
+    const buttons = document.querySelectorAll('.knd');
+    buttons.forEach(btn => btn.classList.remove('act'));
+
+    // Добавляем класс 'act' к <div> внутри нажатой кнопки
+    button.querySelector('.knd').classList.add('act');
+}
+
+
+    </script>
+
+
+
+</div>

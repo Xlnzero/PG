@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    
+    <!-- Кнопки для переключения папок -->
+    <div class="folders">
+        {% for folder, display_name in folders %}
+            <a href="?folder={{ folder }}">{{ display_name }}</a> <!-- Отображаем "чистое" название -->
+        {% endfor %}
+    </div>
+
+    <!-- Галерея изображений -->
+    <div class="image-gallery">
+        {% for image in images %}
+            <img src="{% static 'main/img/PAM/' %}{{ category }}/{{ current_folder }}/{{ image }}" alt="{{ image }}">
+        {% endfor %}
+    </div>
+</body>
+</html>

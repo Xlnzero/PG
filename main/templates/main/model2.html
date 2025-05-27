@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="aks">
+    <div class="General_aks">
+        <div class="aks_name">
+            Последние 3D модели
+            <div class="svg_360"></div>
+        </div>
+        <div class="aks_catalog" id="container1">
+            {% for folder in folders %}
+                <div class="aks_box aks_box_img obj_box {% if forloop.counter > 5 %}hidden{% endif %}"
+                     style="background-image: url('{% static "main/img/360/" %}{{ folder }}/17.gif');"
+                     onclick="openModal('container1', '{% static 'main/img/360/' %}{{ folder }}/17.gif', '{{ folder }}')">
+                    <div class="image-name">{{ folder }}</div>
+                </div>
+            {% endfor %}
+
+            {% if folders|length > 5 %}
+                <div id="el1" class="aks_osn aks_osn2" onclick="toggleBlocks('container1')">
+                    <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% include 'main/_modal.html' %}
+
+
+{% block extra_js %}
+<script src="{% static 'main/js/photo_gallery.js' %}"></script>
+{% endblock %}
+
+
+
+{% endblock %}

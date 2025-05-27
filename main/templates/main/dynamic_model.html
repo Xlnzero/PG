@@ -1,0 +1,245 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    
+    <!-- Кнопки для переключения папок -->
+    <div class="aks">
+   <div class="OD_kn">
+    <ul>
+        {% for folder, display_name in folders %}
+            <li>
+                <a href="?folder={{ folder }}" class="OD_kn_a {% if current_folder == folder %}OD_kn_1{% endif %}">{{ display_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+		<div class="General_aks">
+    <div class="aks_catalog od_pam" id="container1">
+   {% for image in images %}
+        <div class="aks_box aks_box_img obj_box OD_box {% if forloop.counter > 5 %}hidden{% endif %}"
+             style="background-image: url('{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}');"
+             onclick="openModal('container1', '{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}')">
+             <div class="image-name">
+                 {{ image|slice:":-4" }} <!-- Обрезаем последние 4 символа для удаления расширения -->
+             </div>
+        </div>
+    {% endfor %}
+
+    <div id="el1" class="aks_osn" onclick="toggleBlocks('container1')">
+        <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
+    </div>
+</div>
+
+</div>
+
+		
+		
+</div>
+	
+	
+	<div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <div class="modal-image-container" id="modal-image-container" style="transform: scale(1); transition: transform 0.2s;">
+        <!-- Логотип поверх фонового изображения -->
+        <img src="{% static 'main/img/logo main 4.svg' %}" class="logo-overlay">
+    </div>
+    <div class="modal-image-name" id="modal-image-name"></div>
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>
+
+
+
+
+<script> 
+	
+	// Это у нас рабочий скрипт для показать скрыть часть блоков
+	
+	function toggleBlocks(containerID) {
+    let container = document.getElementById(containerID);
+    let hiddenBlocks = container.querySelectorAll('.hidden');
+    let toggleBtn = container.querySelector('.toggle-btn');
+    
+    if (hiddenBlocks.length > 0) {
+        // Раскрыть все изображения
+        hiddenBlocks.forEach(block => block.classList.remove('hidden'));
+        toggleBtn.textContent = "СВЕРНУТЬ";
+    } else {
+        // Скрыть все кроме первых 5
+        let allBlocks = container.querySelectorAll('.aks_box_img');
+        allBlocks.forEach((block, index) => {
+            if (index >= 5) block.classList.add('hidden');
+        });
+        toggleBtn.textContent = "ПОКАЗАТЬ ВСЕ";
+    }
+}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	let images = [];
+let currentIndex = 0;
+
+// Открытие модального окна
+function openModal(containerID, imageSrc) {
+    // Получаем все изображения из контейнера
+    images = Array.from(document.querySelectorAll(`#${containerID} .aks_box_img`))
+        .map(img => img.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1]);
+
+    currentIndex = images.indexOf(imageSrc);
+
+    const modal = document.getElementById("modal");
+    const modalImageContainer = document.getElementById("modal-image-container");
+    const modalImageName = document.getElementById("modal-image-name");
+
+    // Показываем модальное окно
+    modal.style.display = "flex";
+    modalImageContainer.style.backgroundImage = `url('${imageSrc}')`;
+
+    // Обновляем имя файла без расширения
+    const fileName = imageSrc.split('/').pop().split('.')[0];
+    modalImageName.textContent = fileName;
+}
+
+// Закрытие модального окна
+document.querySelector(".close").addEventListener("click", function () {
+    const modal = document.getElementById("modal");
+    const modalImageContainer = document.getElementById("modal-image-container");
+
+    // Сбрасываем масштаб и положение
+    modalImageContainer.style.transform = "scale(1)";
+    modalImageContainer.style.position = "relative";
+    modalImageContainer.style.left = "auto";
+    modalImageContainer.style.top = "auto";
+
+    modal.style.display = "none";
+});
+
+// Закрытие окна при клике на фон
+document.getElementById("modal").addEventListener("click", function (event) {
+    if (event.target === this) {
+        const modalImageContainer = document.getElementById("modal-image-container");
+
+        // Сбрасываем масштаб и положение
+        modalImageContainer.style.transform = "scale(1)";
+        modalImageContainer.style.position = "relative";
+        modalImageContainer.style.left = "auto";
+        modalImageContainer.style.top = "auto";
+
+        this.style.display = "none";
+    }
+});
+
+// Переключение на следующее изображение
+function nextImage() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+    } else {
+        currentIndex = 0;
+    }
+
+    const modalImageContainer = document.getElementById("modal-image-container");
+    const modalImageName = document.getElementById("modal-image-name");
+
+    modalImageContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
+
+    // Обновляем имя файла
+    const fileName = images[currentIndex].split('/').pop().split('.')[0];
+    modalImageName.textContent = fileName;
+}
+
+// Переключение на предыдущее изображение
+function prevImage() {
+    if (currentIndex > 0) {
+        currentIndex--;
+    } else {
+        currentIndex = images.length - 1;
+    }
+
+    const modalImageContainer = document.getElementById("modal-image-container");
+    const modalImageName = document.getElementById("modal-image-name");
+
+    modalImageContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
+
+    // Обновляем имя файла
+    const fileName = images[currentIndex].split('/').pop().split('.')[0];
+    modalImageName.textContent = fileName;
+}
+
+// Масштабирование контейнера
+const modalImageContainer = document.getElementById("modal-image-container");
+
+modalImageContainer.addEventListener("wheel", function (event) {
+    event.preventDefault();
+
+    let scale = parseFloat(this.style.transform.replace(/[^0-9.]/g, '')) || 1;
+    if (event.deltaY < 0) {
+        // Увеличение
+        scale += 0.1;
+    } else {
+        // Уменьшение
+        scale = Math.max(1, scale - 0.1); // Минимальный масштаб — 1
+    }
+    this.style.transform = `scale(${scale})`;
+});
+
+// Перетаскивание контейнера
+let isDragging = false;
+let startX, startY;
+
+modalImageContainer.addEventListener("mousedown", function (event) {
+    isDragging = true;
+    startX = event.clientX - this.offsetLeft;
+    startY = event.clientY - this.offsetTop;
+    this.style.cursor = "grabbing";
+});
+
+document.addEventListener("mousemove", function (event) {
+    if (isDragging) {
+        modalImageContainer.style.position = "absolute";
+        modalImageContainer.style.left = (event.clientX - startX) + "px";
+        modalImageContainer.style.top = (event.clientY - startY) + "px";
+    }
+});
+
+document.addEventListener("mouseup", function () {
+    isDragging = false;
+    modalImageContainer.style.cursor = "grab";
+});
+
+// Запрещаем стандартное перетаскивание
+modalImageContainer.addEventListener("dragstart", function (event) {
+    event.preventDefault();
+});
+
+	
+	</script>
+
+  
+	
+</body>
+</html>
+{% endblock %}

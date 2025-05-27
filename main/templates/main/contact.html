@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    .success-message {
+        display: block;
+        color: wheat;
+        font-weight:300;
+       
+       
+		height: 39vw;
+  
+        padding-top: 20vw;
+        text-align: center;
+    }
+</style>
+ 
+{% if success_message %}
+    <p class="success-message">Ваше сообщение отравлено, мы вам перезвоним</p>
+{% endif %}
+
+{% endblock %}

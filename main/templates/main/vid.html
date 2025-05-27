@@ -1,0 +1,109 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+{% load static %}
+
+<div class="aks vid_gr">
+    <div class="General_aks">
+        <div class="aks_name">Виды гранита</div>
+        <div class="aks_catalog" id="container1">
+            {% for images_vid in images_vid %}
+                <div class="aks_box aks_box_img vid_box"
+                     style="background-image: url('{% static "main/img/GR/" %}{{ images_vid }}');"
+                     onclick="openModal('container1', '{% static "main/img/GR/" %}{{ images_vid }}')">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<style>
+	.vid_gr
+	{
+		min-height: 35vw;
+		margin-bottom: 3vw;
+	}
+    .vid_name {
+		
+        display: block;
+        position: absolute;
+        bottom: 3vw;
+        height: 1vw;
+        width: 100vw;
+        text-align: center;
+        color: white;
+        z-index: 555;
+    }
+</style>
+<!-- Модальное окно -->
+<div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <div class="vid_name" id="image-title">ФОТО</div>
+    <img class="modal-content" id="modal-img">
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>
+
+<script>
+    let images = [];  // Список всех изображений
+    let currentIndex = 0;  // Индекс текущего изображения
+
+    // Открываем модальное окно с конкретным изображением
+    function openModal(containerID, imageSrc) {
+        images = Array.from(document.querySelectorAll(`#${containerID} .aks_box_img`))
+                      .map(img => img.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1]);
+        currentIndex = images.indexOf(imageSrc);
+
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-img");
+        var imageTitle = document.getElementById("image-title");
+
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+        imageTitle.textContent = getFileName(imageSrc); // Название файла без расширения
+    }
+
+    // Закрытие модального окна
+    document.querySelector(".close").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Закрытие при клике вне изображения
+    document.getElementById("modal").addEventListener("click", function(event) {
+        if (event.target === this) {
+            this.style.display = "none";
+        }
+    });
+
+    // Переключение на следующее изображение
+    function nextImage() {
+        if (currentIndex < images.length - 1) {
+            currentIndex++;
+        } else {
+            currentIndex = 0; // Зацикливаем на начало
+        }
+        var modalImg = document.getElementById("modal-img");
+        var imageTitle = document.getElementById("image-title");
+        modalImg.src = images[currentIndex];
+        imageTitle.textContent = getFileName(images[currentIndex]); // Название файла без расширения
+    }
+
+    // Переключение на предыдущее изображение
+    function prevImage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+        } else {
+            currentIndex = images.length - 1; // Зацикливаем на конец
+        }
+        var modalImg = document.getElementById("modal-img");
+        var imageTitle = document.getElementById("image-title");
+        modalImg.src = images[currentIndex];
+        imageTitle.textContent = getFileName(images[currentIndex]); // Название файла без расширения
+    }
+
+    // Получение названия файла без расширения
+    function getFileName(imageSrc) {
+        return imageSrc.split('/').pop().split('.')[0];
+    }
+</script>
+
+{% endblock %}

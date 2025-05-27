@@ -1,0 +1,148 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+{% load static %}
+
+<div class="aks">
+
+<div class="General_aks">
+    <div class="aks_name">Украшения</div>
+    <div class="aks_catalog" id="container1">
+        {% for image in images %}
+            <div class="aks_box aks_box_img"
+                 style="background-image: url('{% static "main/img/OR/" %}{{ image }}');"
+                 onclick="openModal('container1', '{% static "main/img/OR/" %}{{ image }}')">
+            </div>
+        {% endfor %}
+        <div id="el1" class=" aks_osn aks_text" onclick="toggleBlocks('container1')">
+    <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
+</div>
+    </div>
+</div>
+
+<div class="General_aks">
+    <div class="aks_name">Вазы</div>
+    <div class="aks_catalog" id="container2">
+        {% for images_Vaza in images_Vaza %}
+            <div class="aks_box aks_box_img"
+                 style="background-image: url('{% static "main/img/Vaza/" %}{{ images_Vaza }}');"
+                 onclick="openModal('container2', '{% static "main/img/Vaza/" %}{{ images_Vaza }}')">
+            </div>
+        {% endfor %}
+        <div class="aks_text" id="el2">
+            <div class="align osn_link toggle-btn aks_text2" onclick="toggleBlocks('container2')">
+                Показать все...
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="General_aks">
+    <div class="aks_name">Бронза</div>
+    <div class="aks_catalog" id="container3">
+        {% for image_Bronza in image_Bronza %}
+            <div class="aks_box aks_box_img"
+                 style="background-image: url('{% static "main/img/Bronza/" %}{{ image_Bronza }}');"
+                 onclick="openModal('container3', '{% static "main/img/Bronza/" %}{{ image_Bronza }}')">
+            </div>
+        {% endfor %}
+        <div class="aks_text" id="el3">
+            <div class="align osn_link toggle-btn aks_text2" onclick="toggleBlocks('container3')">
+                Показать все...
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Модальное окно -->
+<div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modal-img">
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>
+
+<script>
+    let expanded = {
+        container1: false,
+        container2: false,
+        container3: false
+    };
+    let alwaysVisible = 11; // Количество всегда видимых блоков
+
+    function toggleBlocks(containerID) {
+        let blocks = document.querySelectorAll(`#${containerID} .aks_box_img`);
+        for (let i = alwaysVisible; i < blocks.length; i++) {
+            blocks[i].classList.toggle("hidden");
+        }
+
+        expanded[containerID] = !expanded[containerID];
+        document.querySelector(`#${containerID} .toggle-btn`).textContent = expanded[containerID] ? "Свернуть - " : "Показать все...";
+    }
+
+    // Инициализация: скрыть все блоки, кроме первых alwaysVisible
+    function init() {
+        let containers = ['container1', 'container2', 'container3'];
+        containers.forEach(containerID => {
+            let blocks = document.querySelectorAll(`#${containerID} .aks_box_img`);
+            for (let i = alwaysVisible; i < blocks.length; i++) {
+                blocks[i].classList.add("hidden");
+            }
+        });
+    }
+
+    // Вызов функции инициализации при загрузке страницы
+    init();
+
+    let images = [];  // Список всех изображений
+    let currentIndex = 0;  // Индекс текущего изображения
+
+    // Открываем модальное окно с конкретным изображением
+    function openModal(containerID, imageSrc) {
+        images = Array.from(document.querySelectorAll(`#${containerID} .aks_box_img`))
+                      .map(img => img.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1]);
+        currentIndex = images.indexOf(imageSrc);
+
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-img");
+
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+    }
+
+    // Закрытие модального окна
+    document.querySelector(".close").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Закрытие при клике вне изображения
+    document.getElementById("modal").addEventListener("click", function(event) {
+        if (event.target === this) {
+            this.style.display = "none";
+        }
+    });
+
+    // Переключение на следующее изображение
+    function nextImage() {
+        if (currentIndex < images.length - 1) {
+            currentIndex++;
+        } else {
+            currentIndex = 0; // Зацикливаем на начало
+        }
+        document.getElementById("modal-img").src = images[currentIndex];
+    }
+
+    // Переключение на предыдущее изображение
+    function prevImage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+        } else {
+            currentIndex = images.length - 1; // Зацикливаем на конец
+        }
+        document.getElementById("modal-img").src = images[currentIndex];
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% load static %}
+<!-- templates/main/_modal.html -->
+<div id="modal" class="modal" style="display: none;">
+    <span class="close">&times;</span>
+
+
+
+    <div class="modal-image-container" id="modal-image-container" style="transform: scale(1); transition: transform 0.2s;">
+		<img id="modal-img" src="">
+        <img src="{% static 'main/img/logo main 4.svg' %}" class="logo-overlay">
+    </div>
+    <div class="modal-image-name" id="modal-image-name"></div>
+	
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>

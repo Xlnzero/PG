@@ -1,0 +1,162 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+<div class="pam_2">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <style>
+        .pdf-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    margin: 5px 0;
+}
+.pdf-controls button {
+    background-color: #2d2e36;
+    color: white;
+    border: none;
+    padding: 0.3vw 0.6vw;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.pdf-controls button:hover {
+    background-color: #43444d;
+}
+.pdf-controls span {
+    font-size: 18px;
+    font-weight: bold;
+}
+.pdf-slider-container {
+    display: flex;
+    justify-content: center;
+    
+}
+.pdf-slider {
+    width: 80%;
+    margin-bottom: 1vw;
+}
+.pdf-viewer {
+    margin-top: -3vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 50vw;  /* Фиксированная высота для pdf-viewer */
+}
+.pdf-canvas-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    height: 45vw;  /* Фиксированная высота для pdf-viewer */
+}
+#pdf-canvas-left, #pdf-canvas-right {
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;  /* Высота canvas зависит от родительского контейнера */
+}
+
+    </style>
+    <div class="pdf-viewer">
+        <div class="pdf-controls">
+            <button onclick="prevPages()">⬅ Назад</button>
+            <span id="page-num"></span> / <span id="page-count"></span>
+            <button onclick="nextPages()">Вперёд ➡</button>
+        </div>
+        <div class="pdf-slider-container">
+            <input type="range" id="page-slider" class="pdf-slider" min="1" value="1" onchange="goToPage(this.value)">
+        </div>
+        <div class="pdf-canvas-container">
+            <canvas id="pdf-canvas-left"></canvas>
+            <canvas id="pdf-canvas-right"></canvas>
+        </div>
+    </div>
+    <br><br><br>
+    <script>
+        var url = "{% static 'main/img/catalog.pdf' %}";  // Путь к PDF
+        var pdfDoc = null, pageNum = 1, pageRendering = false, canvasLeft = document.getElementById("pdf-canvas-left"), canvasRight = document.getElementById("pdf-canvas-right"), ctxLeft = canvasLeft.getContext("2d"), ctxRight = canvasRight.getContext("2d");
+
+        function renderPages(num) {
+            if (pageRendering) return;
+            pageRendering = true;
+
+            pdfDoc.getPage(num).then(function(page1) {
+                var viewport1 = page1.getViewport({ scale: 1.5 });
+                canvasLeft.width = viewport1.width;
+                canvasLeft.height = viewport1.height;
+
+                var renderContext1 = {
+                    canvasContext: ctxLeft,
+                    viewport: viewport1
+                };
+
+                // Если это первая страница, просто отображаем её на левом канвасе
+                if (num === 1) {
+                    page1.render(renderContext1).promise.then(function() {
+                        pageRendering = false;
+                        document.getElementById("page-num").textContent = num;
+                        canvasRight.style.display = "none";
+                    });
+                } else {
+                    // Настройка canvas для двух страниц
+                    canvasRight.style.display = "block";
+                    pdfDoc.getPage(num + 1).then(function(page2) {
+                        var viewport2 = page2.getViewport({ scale: 1.5 });
+                        canvasRight.width = viewport2.width;
+                        canvasRight.height = viewport2.height;
+
+                        var renderContext2 = {
+                            canvasContext: ctxRight,
+                            viewport: viewport2
+                        };
+
+                        // Ожидаем завершения рендеринга обеих страниц
+                        Promise.all([
+                            page1.render(renderContext1).promise,
+                            page2.render(renderContext2).promise
+                        ]).then(function() {
+                            pageRendering = false;
+                            document.getElementById("page-num").textContent = num + "-" + (num + 1);
+                        });
+                    }).catch(function() {
+                        // В случае ошибки отображаем только текущую страницу
+                        page1.render(renderContext1).promise.then(function() {
+                            pageRendering = false;
+                            document.getElementById("page-num").textContent = num;
+                            canvasRight.style.display = "none";
+                        });
+                    });
+                }
+            });
+        }
+
+        function prevPages() {
+            if (pageNum <= 1) return;
+            pageNum -= (pageNum === 2) ? 1 : 2;
+            if (pageNum < 1) pageNum = 1;
+            renderPages(pageNum);
+            document.getElementById("page-slider").value = pageNum;
+        }
+
+        function nextPages() {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum += (pageNum === 1) ? 1 : 2;
+            if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+            renderPages(pageNum);
+            document.getElementById("page-slider").value = pageNum;
+        }
+
+        function goToPage(num) {
+            pageNum = parseInt(num);
+            renderPages(pageNum);
+        }
+
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            document.getElementById("page-count").textContent = pdf.numPages;
+            document.getElementById("page-slider").max = pdf.numPages;
+            renderPages(pageNum);
+        });
+    </script>
+</div>
+{% endblock %}

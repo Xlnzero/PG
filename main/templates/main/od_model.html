@@ -1,0 +1,250 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+{% load static %}
+
+<div class="aks">
+    <div class="OD_kn">
+        <ul>
+            <li class="OD_kn_1" data-folder="1" onclick="updateContent(this)">
+                Одиночные стелы
+            </li>
+            <li data-folder="2" onclick="updateContent(this)">
+                Одиночные надгробия
+            </li>
+            <li data-folder="3" onclick="updateContent(this)">
+                Одиночные комплексы
+            </li>
+            <li data-folder="4" onclick="updateContent(this)">
+                Премиум-сегмент
+            </li>
+        </ul>
+    </div>
+
+    <div class="General_aks">
+        <div class="aks_catalog od_pam" id="container1">
+            {% for images_od_model in images_od_model %}
+                <div class="aks_box aks_box_img obj_box OD_box"
+                     style="background-image: url('{% static "main/img/OD/1/" %}{{ images_od_model }}');"
+                     onclick="openModal('container1', '{% static "main/img/OD/1/" %}{{ images_od_model }}')">
+                </div>
+            {% endfor %}
+
+            <div id="el1" class="aks_osn" onclick="toggleBlocks('container1')">
+                <p class="toggle-btn">
+                   ПОКАЗАТЬ ВСЕ
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно -->
+<div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modal-img" style="transform: scale(1); transition: transform 0.2s;">
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>
+
+<script>
+    let expanded = {
+        container1: false,
+        container2: false,
+        container3: false
+    };
+    let alwaysVisible = 5; // Количество всегда видимых блоков
+
+    function toggleBlocks(containerID) {
+        let blocks = document.querySelectorAll(`#${containerID} .aks_box_img`);
+        for (let i = alwaysVisible; i < blocks.length; i++) {
+            blocks[i].classList.toggle("hidden");
+        }
+
+        expanded[containerID] = !expanded[containerID];
+        document.querySelector(`#${containerID} .toggle-btn`).textContent = expanded[containerID] ? "СВЕРНУТЬ" : "ПОКАЗАТЬ ВСЕ";
+    }
+
+    function init() {
+        let containers = ['container1', 'container2', 'container3'];
+        containers.forEach(containerID => {
+            let blocks = document.querySelectorAll(`#${containerID} .aks_box_img`);
+            for (let i = alwaysVisible; i < blocks.length; i++) {
+                blocks[i].classList.add("hidden");
+            }
+        });
+    }
+
+    init();
+
+    let images = [];
+    let currentIndex = 0;
+
+    function openModal(containerID, imageSrc) {
+        images = Array.from(document.querySelectorAll(`#${containerID} .aks_box_img`))
+                      .map(img => img.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1]);
+        currentIndex = images.indexOf(imageSrc);
+
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-img");
+
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+        modal.style.alignItems = "center";
+        modalImg.src = imageSrc;
+    }
+
+    document.querySelector(".close").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    document.getElementById("modal").addEventListener("click", function(event) {
+        if (event.target === this) {
+            this.style.display = "none";
+        }
+    });
+
+    function nextImage() {
+        if (currentIndex < images.length - 1) {
+            currentIndex++;
+        } else {
+            currentIndex = 0;
+        }
+        document.getElementById("modal-img").src = images[currentIndex];
+    }
+
+    function prevImage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+        } else {
+            currentIndex = images.length - 1;
+        }
+        document.getElementById("modal-img").src = images[currentIndex];
+    }
+
+    function updateContent(element) {
+        const folder = element.getAttribute('data-folder');
+
+        fetch(`/update_od_model/?folder=${folder}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('container1');
+                container.innerHTML = '';
+
+                // Сортировка изображений по числовому значению
+                const sortedImages = data.images.sort((a, b) => {
+                    const numA = parseInt(a.match(/\d+/)[0]);
+                    const numB = parseInt(b.match(/\d+/)[0]);
+                    return numA - numB;
+                });
+
+                sortedImages.forEach(image => {
+                    const div = document.createElement('div');
+                    div.className = 'aks_box aks_box_img obj_box OD_box';
+                    div.style.backgroundImage = `url('/static/main/img/OD/${folder}/${image}')`;
+                    div.onclick = () => openModal('container1', `/static/main/img/OD/${folder}/${image}`);
+                    container.appendChild(div);
+                });
+
+                const el1 = document.createElement('div');
+                el1.className = 'aks_text';
+                el1.id = 'el1';
+                el1.innerHTML = 
+                    `
+                    <div id="el1" class="aks_osn" onclick="toggleBlocks('container1')"> 
+                        <p class="toggle-btn">
+                           ПОКАЗАТЬ ВСЕ
+                        </p>
+                    </div>`;
+                container.appendChild(el1);
+
+                // Скрыть все блоки, кроме первых alwaysVisible
+                init();
+
+                // Обновить стиль нажатой кнопки
+                document.querySelectorAll('.OD_kn li').forEach(li => li.classList.remove('OD_kn_1'));
+                element.classList.add('OD_kn_1');
+            });
+    }
+
+   // Добавляем функцию масштабирования
+document.getElementById("modal-img").addEventListener("wheel", function(event) {
+    event.preventDefault();
+
+    let scale = parseFloat(this.style.transform.replace(/[^0-9.]/g, ''));
+    if (event.deltaY < 0) {
+        // Прокрутка вверх для увеличения
+        scale += 0.1;
+    } else {
+        // Прокрутка вниз для уменьшения
+        scale = Math.max(1, scale - 0.1); // Минимальный масштаб 1
+    }
+    this.style.transform = `scale(${scale})`;
+});
+
+// Добавляем функцию для перемещения изображения
+let isDragging = false;
+let startX, startY;
+const modalImg = document.getElementById("modal-img");
+
+modalImg.addEventListener("mousedown", function(event) {
+    isDragging = true;
+    startX = event.clientX - this.offsetLeft;
+    startY = event.clientY - this.offsetTop;
+    this.classList.add("cursor-grabbing");
+});
+
+document.addEventListener("mousemove", function(event) {
+    if (isDragging) {
+        let img = document.getElementById("modal-img");
+        img.style.position = "absolute";
+        img.style.left = (event.clientX - startX) + "px";
+        img.style.top = (event.clientY - startY) + "px";
+    }
+});
+
+document.addEventListener("mouseup", function() {
+    isDragging = false;
+    modalImg.classList.remove("cursor-grabbing");
+});
+
+	document.querySelector(".close").addEventListener("click", function() {
+    var modal = document.getElementById("modal");
+    var modalImg = document.getElementById("modal-img");
+
+    // Сбрасываем масштаб и положение изображения
+    modalImg.style.transform = "scale(1)";
+    modalImg.style.position = "relative";
+    modalImg.style.left = "auto";
+    modalImg.style.top = "auto";
+
+    modal.style.display = "none";
+});
+
+document.getElementById("modal").addEventListener("click", function(event) {
+    if (event.target === this) {
+        var modalImg = document.getElementById("modal-img");
+
+        // Сбрасываем масштаб и положение изображения
+        modalImg.style.transform = "scale(1)";
+        modalImg.style.position = "relative";
+        modalImg.style.left = "auto";
+        modalImg.style.top = "auto";
+
+        this.style.display = "none";
+    }
+});
+document.addEventListener("mouseup", function() {
+    isDragging = false;
+    modalImg.classList.remove("cursor-grabbing");
+});
+
+// Запрещаем перетаскивание изображения браузером
+modalImg.addEventListener("dragstart", function(event) {
+    event.preventDefault();
+});
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,258 @@
+.aks
+{
+	padding-top: 7vw;
+	display: block;
+
+	width: 100vw;
+	padding-bottom: 7vw;
+}
+.General_aks
+{
+	width: 60vw;
+	padding-left: 20vw;
+	padding-top: 2vw;
+}
+.aks_name
+{
+
+	align-items: center;
+	display: flex;
+	height: 2vw;
+	
+}
+.aks_name > span
+{
+	 white-space: nowrap;
+    display: flex;
+    align-items: center; /* Выровнять по центру по вертикали */
+	
+}
+.svg_360 {
+	margin-left: 1vw;
+    display: flex;
+    align-items: center; /* Выровнять по центру по вертикали */
+    width: 5vw; /* Задаем фиксированную ширину для SVG */
+    height: 2vw; /* Задаем фиксированную высоту для SVG */
+    background: url("../img/Ресурс 1.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; /* Центрировать изображение */
+}
+
+.aks_catalog
+{
+	
+	width: 60vw;
+	padding-top: 1vw;
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    grid-gap: 1vw;
+}
+
+.aks_box {
+            width: 9.15vw;
+            height: 13vw;
+            background-color: white;
+            text-align: center;
+            border-radius: 0.5vw;
+            box-shadow: 0 0.2vw 0.5vw rgba(0, 0, 0, 0.1);
+        }
+
+.aks_osn
+{
+            height: 13vw;
+            background-color: #373840;
+    		display: flex;
+			flex-direction: row;
+			justify-content: center;
+			vertical-align: middle;
+			width: 18.65vw;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			cursor: pointer;
+            align-items: center;
+			transform: scale(0.999);
+			transition: all 0.5s ease;
+      		
+}
+.aks_osn2
+{
+            height: 13vw;
+            background-color: #43444e;
+    		display: flex;
+			flex-direction: row;
+			justify-content: center;
+			vertical-align: middle;
+			width: 18.65vw;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			cursor: pointer;
+            align-items: center;
+			transform: scale(0.999);
+			transition: all 0.5s ease;
+      		
+}
+
+
+.aks_osn:hover
+{
+	transform: scale(0.98);
+	background-color: #2d2e36;
+	color: rgb(241, 193, 112);
+}
+
+
+
+.obj_box{
+	 width: 14vw;
+}
+.vid_box
+{
+	height: 9.15vw;
+	
+}
+
+
+.aks_box_img
+{
+	transform: scale(1.001);
+	display: block;
+	transition: all 0.5s ease;
+    background-size: cover;
+    background-position: center;
+	cursor: pointer;
+	
+}
+.show
+{
+	display: block;
+}
+.hidden {
+            display: none;
+        }
+
+.aks_box_img:hover
+{
+	 transform: scale(1.05);
+}
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-width: 80%;
+    max-height: 80%;
+    margin: auto;
+    display: block;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cursor-grabbing {
+    cursor: grabbing;
+}
+
+
+/* Кнопки переключения */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    padding: 1vw 1.6vw;
+    font-size: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.prev { left: 20px; }
+.next { right: 20px; }
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Кнопка закрытия */
+.close {
+	    background-color: rgba(0, 0, 0, 0.6);
+    padding: 0vw 1vw 0.6vw 1vw;
+    position: absolute;
+	z-index: 2000;
+    top: 1.5vw;
+    right: 1.5vw;
+    color: white;
+    font-size: 50px;
+    cursor: pointer;
+	    border-radius: 5px;
+
+}
+.aks_text
+{
+	
+	width: 9.15vw;
+	
+	height: 13vw;
+	background: #A86C6D;
+	
+
+}
+.vid_box_text
+{
+	
+	height: 9.15vw;
+
+}
+.aks_hr
+{
+	background: #FFFFFF;
+	display: block;
+	height: 0.05vw;
+	flex: 1; 
+	margin-top: 0.47vw;
+}
+
+.aks_text2
+{
+	margin-right: 1vw;
+	 flex: 0 1 auto;
+	white-space: nowrap;
+	font-size: 0.8vw;
+	text-align: left;
+	
+}
+.align
+{
+	width: 100%;
+	cursor: pointer;
+	display: flex;
+	flex-wrap: nowrap;
+	height:1vw;
+
+}
+.skr
+{
+	display: none;
+}
+.align:hover .osn_link2
+{
+
+	background-color: rgb(241, 193, 112);
+}
+

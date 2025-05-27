@@ -1,0 +1,39 @@
+/* Основной контейнер для сетки */
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки одинаковой ширины */
+    gap: 1vw; /* Расстояние между блоками */
+    max-width: 60vw; /* Ограничиваем ширину контейнера */
+    margin: 0 auto; /* Центрируем контейнер */
+	padding: 10vw 0;
+    box-sizing: border-box;
+}
+
+/* Блоки внутри сетки */
+.container .box {
+    background-color: #3498db; /* Цвет фона */
+    width: 100%; /* Ширина блока задаётся автоматически сеткой */
+    padding-top: 100%; /* Трюк для создания квадрата (1:1) */
+    position: relative; /* Для абсолютного позиционирования содержимого */
+    border-radius: 10px; /* Закруглённые углы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+    transition: transform 0.2s ease, background-color 0.2s ease; /* Анимация на hover */
+}
+
+/* Содержимое блока */
+.container .box span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Ховер эффект для блоков */
+.container .box:hover {
+    transform: scale(1.01); /* Увеличение при наведении */
+    background-color: #2980b9; /* Изменение цвета при наведении */
+}

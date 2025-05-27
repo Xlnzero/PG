@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Слайдовый блок</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 400px;
+            height: 200px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+        }
+
+        .sliding-block {
+            display: flex;
+            width: 800px; /* Удвоенная ширина контейнера */
+            transition: transform 0.5s ease;
+        }
+
+        .block {
+            width: 400px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .block-left {
+            background-color: #4CAF50;
+        }
+
+        .block-right {
+            background-color: #2196F3;
+        }
+
+        .button {
+            margin: 20px auto;
+            display: block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sliding-block" id="slidingBlock">
+            <div class="block block-left">Левая часть</div>
+            <div class="block block-right">Правая часть</div>
+        </div>
+    </div>
+    <button class="button" onclick="slideBlock()">Переместить</button>
+
+    <script>
+        let isLeftVisible = true;
+
+        function slideBlock() {
+            const slidingBlock = document.getElementById('slidingBlock');
+            if (isLeftVisible) {
+                slidingBlock.style.transform = 'translateX(-400px)';
+            } else {
+                slidingBlock.style.transform = 'translateX(0)';
+            }
+            isLeftVisible = !isLeftVisible;
+        }
+    </script>
+</body>
+</html>

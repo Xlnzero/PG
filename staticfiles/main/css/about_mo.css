@@ -1,0 +1,160 @@
+
+.about_mo
+{
+	padding-top: 10vw;
+}
+.about_mo_cor
+{
+	position: relative;
+	
+
+	height: 30vw;
+	
+}
+.od_pam
+{
+	background: #43444d;
+	padding: 1vw;
+}
+.OD_box
+{
+	width: 18.65vw;
+	background-position: top;
+}
+.OD_kn
+{
+	
+	position: fixed;
+	padding-left: 8vw;
+	padding-top: 5vw;
+	height: 20vw;
+	
+	
+}
+
+.OD_kn > ul
+{
+	height: 15vw;
+
+}
+
+.OD_kn > ul > li
+{
+	all: unset; /* Сбрасывает все стили элемента */
+}
+.OD_kn_a:hover
+{
+	background: #43444d;
+}
+
+
+.OD_kn_a {
+	
+    overflow: hidden;
+	cursor: pointer;
+	display: block;
+	width: 12vw;
+	background: #373840;
+	margin: 0.2vw 0;
+	padding: 1vw 0 ;
+	padding-left: 0.5vw;
+	white-space: nowrap;
+}
+
+.OD_kn_1
+{
+	background: #43444d;!important
+	
+}
+
+.hidden {
+    display: none;
+}
+
+.aks_box_img {
+    position: relative; /* Устанавливаем относительное позиционирование для вложенных элементов */
+    background-size: cover; /* Убедимся, что изображение заполняет блок */
+    background-position: center;
+    cursor: pointer;
+}
+
+.image-name {
+    position: absolute;
+    top: 0.5vw; /* Располагаем в правом верхнем углу */
+    right: 0.5vw; /* Отступ справа */
+    background: #FFFFFF; /* Белый фон */
+    color: black; /* Черный текст */
+    padding: 0.5vw 1vw; /* Внутренние отступы */
+    font-size: 1vw; /* Размер шрифта */
+    border-radius: 0.3vw; /* Скруглённые углы */
+    pointer-events: none; /* Отключаем взаимодействие с текстом */
+    z-index: 1; /* Расположение поверх */
+    text-transform: capitalize; /* Первая буква заглавная */
+}
+
+.modal-image-name {
+    position: absolute;
+    bottom: 1vw; /* Отступ снизу */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translateX(-50%); /* Смещаем элемент на половину его ширины */
+    background: rgba(0, 0, 0, 0.7); /* Полупрозрачный чёрный фон */
+    color: white; /* Цвет текста */
+    padding: 0.5vw 1vw; /* Внутренние отступы */
+    font-size: 1.5vw; /* Размер шрифта */
+    border-radius: 0.3vw; /* Скруглённые углы */
+    pointer-events: none; /* Отключаем взаимодействие с текстом */
+    z-index: 2; /* Расположение поверх */
+    text-transform: capitalize; /* Первая буква заглавная */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-image-container {
+	display: block;
+    position: relative; /* Позволяет логотипу позиционироваться внутри контейнера */
+    width: 80vw; /* Размер по ширине */
+    height: 80vh; /* Размер по высоте */
+    background-size: contain; /* Изображение будет полностью заполнить контейнер */
+    background-position: center; /* Центрируем фоновое изображение */
+    cursor: grab; /* Указатель "рука" для перетаскивания */
+	background-repeat: no-repeat;
+	border-radius: 1vw;
+}
+
+.logo-overlay {
+    position: absolute;
+    bottom: 2vw; /* Расположим сверху */
+    width: 10vw; /* Размер логотипа */
+    height: auto; /* Пропорциональная высота */
+    z-index: 2; /* Логотип поверх фонового изображения */
+    pointer-events: none; /* Логотип не блокирует события */
+	left: 35vw;
+	opacity: 0.5;
+}
+
+.modal-image-name {
+    position: absolute;
+    bottom: 50px; /* Отступ снизу */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translateX(-50%); /* Смещаем на половину ширины */
+    background: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+    color: white; /* Цвет текста */
+    padding: 0.5vw 1vw; /* Внутренние отступы */
+    font-size: 1.5vw; /* Адаптивный размер шрифта */
+    border-radius: 0.3vw; /* Скруглённые углы */
+    pointer-events: none;
+    z-index: 2;
+}
+
+

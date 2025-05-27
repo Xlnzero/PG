@@ -1,0 +1,115 @@
+.block3
+{
+	margin-left: 15vw;
+	width: 70vw;
+	padding-top: 2vw;
+	display: grid;
+
+	grid-gap: 2vw;
+	
+	font-size: 1vw;
+	grid-template-areas: 
+    ". ."
+    ". ."
+    ;
+}
+.block3back
+{
+	background: #4e4e57;
+	grid-gap: 2vw;
+	padding: 2vw 3vw 1vw 3vw ;
+	border: #737374 solid 0.1vw;
+	margin-bottom: 2vw;
+}
+.block3_1
+{
+	
+	
+
+	text-align: justify;
+
+	width: 100%;
+	vertical-align: top;
+
+}
+.block32
+{
+	
+	
+}
+
+.block3_1_img
+{
+	
+	
+	background-size: cover;
+	width: 34vw;
+	height: 20vw;
+	transition: all 0.5s ease-out;
+	cursor: default;
+}
+.block3_1_img:hover
+{
+	transform: scale(1.02);
+	
+}
+.box_h
+{
+	overflow: hidden;
+	width: 34vw;
+	height: 20vw;
+}
+
+
+.osn_link{
+	transition:  0.1s ease-in-out;
+}
+
+
+.osn_link:hover
+{
+	color: rgb(241, 193, 112);
+	
+}
+.mb{background-image:url("/static/main/img/auto 2.jpg");}
+.pr{background-image:url("/static/main/img/pr.webp");}
+.knopkaV{
+	
+	position: absolute;
+	right: 5vw;
+	display: block;
+	width: 2vw;
+	height: 2vw;
+	background-image: url("/static/main/img/V.svg");
+	background-size: cover;
+	
+}
+.knopkaV:focus 
+{
+	
+	box-shadow: none;
+	
+}
+
+
+.pam 
+{
+
+padding: 15vw;
+	display: flex;
+	
+	background: #5E4848;
+	gap: 1vw; 
+  	justify-content: flex-start;
+	flex-flow: row wrap; 
+    flex-wrap: wrap; 
+}
+
+
+.pam > div
+{
+	display: block;
+	width: 20vw;
+	height: 20vw;
+	border: solid black 2px;
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <style>
+    /* Стили для контейнера и изображения */
+    .model-container {
+      width: 500px; /* Размер контейнера */
+      height: 500px;
+      overflow: hidden;
+      position: relative;
+      margin: 20px auto;
+      border: 1px solid #ccc; /* Рамка для визуализации */
+    }
+
+    .model-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: grab;
+    }
+
+    /* Стили для кнопок */
+    .controls {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  {% for folder in folders %}
+  <div id="model-container-{{ forloop.counter }}" class="model-container">
+    <img id="model-image-{{ forloop.counter }}" class="model-image" src="/static/main/img/360/{{ folder }}/1.gif" alt="3D Model {{ forloop.counter }}">
+  </div>
+
+  <div class="controls">
+    <button onclick="rotateLeft('model-image-{{ forloop.counter }}', '{{ folder }}')">← Вращать влево</button>
+    <button onclick="rotateRight('model-image-{{ forloop.counter }}', '{{ folder }}')">Вращать вправо →</button>
+  </div>
+  {% endfor %}
+
+  <script>
+    // JavaScript для вращения модели
+    function rotateModel(imageId, folder) {
+      const modelImage = document.getElementById(imageId);
+      const totalFrames = 25; // Общее количество изображений
+      let isDragging = false;
+      let startX = 0;
+      let currentFrame = 1;
+
+      // Функция для обновления изображения
+      function updateModelImage(frame) {
+        modelImage.src = `/static/main/img/360/${folder}/${String(frame).padStart(1, "")}.gif`;
+      }
+
+      // Отключить перетаскивание изображения
+      modelImage.addEventListener("dragstart", (e) => {
+        e.preventDefault();
+      });
+
+      // Обработчик начала перетаскивания
+      modelImage.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX;
+      });
+
+      // Обработчик движения мыши
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - startX;
+        const sensitivity = 20; // Увеличиваем чувствительность вращения
+        const frameChange = Math.round(-deltaX / sensitivity); // Инвертируем направление
+
+        let newFrame = currentFrame + frameChange;
+
+        // Зацикливание кадров
+        if (newFrame < 1) newFrame += totalFrames;
+        if (newFrame > totalFrames) newFrame -= totalFrames;
+
+        if (newFrame !== currentFrame) {
+          updateModelImage(newFrame);
+          currentFrame = newFrame;
+          startX = e.clientX; // Обновляем начальную позицию для следующего изменения
+        }
+      });
+
+      // Обработчик окончания перетаскивания
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      return {
+        rotateLeft: () => {
+          currentFrame = currentFrame > 1 ? currentFrame - 1 : totalFrames;
+          updateModelImage(currentFrame);
+        },
+        rotateRight: () => {
+          currentFrame = currentFrame < totalFrames ? currentFrame + 1 : 1;
+          updateModelImage(currentFrame);
+        }
+      };
+    }
+
+    const models = {};
+    {% for folder in folders %}
+    models['{{ folder }}'] = rotateModel('model-image-{{ forloop.counter }}', '{{ folder }}');
+    {% endfor %}
+
+    function rotateLeft(imageId, folder) {
+      models[folder].rotateLeft();
+    }
+
+    function rotateRight(imageId, folder) {
+      models[folder].rotateRight();
+    }
+
+    // Предзагрузка изображений для плавного вращения
+    function preloadImages(folder) {
+      for (let i = 1; i <= 25; i++) {
+        const img = new Image();
+        img.src = `/static/main/img/360/${folder}/${String(i).padStart(1, "")}.gif`;
+      }
+    }
+
+    {% for folder in folders %}
+    preloadImages('{{ folder }}');
+    {% endfor %}
+  </script>
+</body>
+</html>
