@@ -168,6 +168,7 @@ def model(request):
         'folders': folders,
         'preview_images': preview_images,
         'title': title,
+        'hide_names': True,  # на этой странице убираем блок
         'menu': menu  # убедитесь, что переменная menu доступна
     }
     return render(request, 'main/model2.html', context)

@@ -11,8 +11,8 @@
         <div class="aks_catalog" id="container1">
             {% for folder in folders %}
                 <div class="aks_box aks_box_img obj_box {% if forloop.counter > 5 %}hidden{% endif %}"
-                     style="background-image: url('{% static "main/img/360/" %}{{ folder }}/17.gif');"
-                     onclick="openModal('container1', '{% static 'main/img/360/' %}{{ folder }}/17.gif', '{{ folder }}')">
+                     style="background-image: url('{% static "main/img/360/" %}{{ folder }}/17.webp');"
+                     onclick="openModal('container1', '{% static 'main/img/360/' %}{{ folder }}/17.webp', '{{ folder }}')">
                     <div class="image-name">{{ folder }}</div>
                 </div>
             {% endfor %}
@@ -25,6 +25,8 @@
         </div>
     </div>
 </div>
+
+
 
 {% include 'main/_modal.html' %}
 

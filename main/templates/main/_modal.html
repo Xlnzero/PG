@@ -1,6 +1,38 @@
 {% load static %}
 <!-- templates/main/_modal.html -->
 <div id="modal" class="modal" style="display: none;">
+    <style>
+.modal-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none; /* скрыт по умолчанию */
+    z-index: 1000;
+}
+
+.spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #444;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+    </style>
+
+    <div id="modal-loader" class="modal-loader">
+  <div class="spinner"></div>
+</div>
+
     <span class="close">&times;</span>
 
 
@@ -9,7 +41,10 @@
 		<img id="modal-img" src="">
         <img src="{% static 'main/img/logo main 4.svg' %}" class="logo-overlay">
     </div>
-    <div class="modal-image-name" id="modal-image-name"></div>
+
+    {% if not hide_names %}
+<div class="modal-image-name" id="modal-image-name"></div>
+{% endif %}
 	
     <button class="prev" onclick="prevImage()">&#10094;</button>
     <button class="next" onclick="nextImage()">&#10095;</button>

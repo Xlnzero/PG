@@ -7,7 +7,7 @@ let startY = 0;
 let currentFrame = 1;
 let currentFolder = null;
 
-const totalFrames = 25;
+const totalFrames = 100;
 
 const modal = document.getElementById("modal");
 const modalImageContainer = document.getElementById("modal-image-container");
@@ -16,9 +16,7 @@ const modalImageName = document.getElementById("modal-image-name");
 // Универсальная функция открытия модального окна
 function openModal(containerID, imageSrc, folder = null) {
     is3DMode = folder !== null;
-    if (is3DMode) {
-        currentFolder = folder;
-    }
+    if (is3DMode) currentFolder = folder;
 
     const container = document.getElementById(containerID);
     images = Array.from(container.querySelectorAll('.aks_box_img')).map(img => {
@@ -32,26 +30,36 @@ function openModal(containerID, imageSrc, folder = null) {
 
     modal.style.display = "flex";
     modalImageContainer.style.backgroundImage = `url('${imageSrc}')`;
-    modalImageName.textContent = fileName.split('.')[0];
+    if (modalImageName) modalImageName.textContent = fileName.split('.')[0];
+
+    document.getElementById("modal-loader").style.display = "block";
 
     if (is3DMode) {
-        preloadFrames(folder);
-        setup3DRotation(folder, fileName);
+        preloadFrames(folder, () => {
+            document.getElementById("modal-loader").style.display = "none";
+            setup3DRotation(folder, fileName);
+        });
+    } else {
+        document.getElementById("modal-loader").style.display = "none";
     }
 }
 
 // Предзагрузка кадров 3D модели
-function preloadFrames(folder) {
+function preloadFrames(folder, onComplete) {
+    let loaded = 0;
     for (let i = 1; i <= totalFrames; i++) {
         const img = new Image();
-        img.src = `/static/main/img/360/${folder}/${i}.gif`;
+        img.onload = img.onerror = () => {
+            loaded++;
+            if (loaded === totalFrames && typeof onComplete === "function") onComplete();
+        };
+        img.src = `/static/main/img/360/${folder}/${i}.webp`;
     }
 }
 
 // Настройка вращения 3D модели
 function setup3DRotation(folder, startingFile) {
-    currentFrame = parseInt(startingFile.split('.')[0]) || 17;
-
+    currentFrame = parseInt(startingFile.split('.')[0]) || 100;
     modalImageContainer.ondragstart = () => false;
 
     modalImageContainer.onmousedown = (e) => {
@@ -71,8 +79,7 @@ function setup3DRotation(folder, startingFile) {
         if (newFrame > totalFrames) newFrame = 1;
 
         if (newFrame !== currentFrame) {
-            // Используем глобальную currentFolder вместо folder
-            modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${newFrame}.gif')`;
+            modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${newFrame}.webp')`;
             currentFrame = newFrame;
             startX = e.clientX;
         }
@@ -81,48 +88,33 @@ function setup3DRotation(folder, startingFile) {
     window.onmouseup = () => isDragging = false;
 }
 
-// Переход к следующему изображению
+// Переключение изображений
 function nextImage() {
-    resetTransform();
-    currentIndex = (currentIndex + 1) % images.length;
-    if (is3DMode) {
-        let newImageUrl = images[currentIndex];
-        // Извлекаем папку из URL
-        let folderMatch = newImageUrl.match(/360\/([^\/]+)/);
-        if (folderMatch) {
-            currentFolder = folderMatch[1];
-        }
-        let fileName = newImageUrl.split('/').pop();
-        currentFrame = parseInt(fileName.split('.')[0]) || 17;
-        preloadFrames(currentFolder);
-        modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${currentFrame}.gif')`;
-        modalImageName.textContent = fileName.split('.')[0];
-    } else {
-        modalImageContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
-        modalImageName.textContent = images[currentIndex].split('/').pop().split('.')[0];
-    }
+    changeImage(1);
 }
 
-
-// Переход к предыдущему изображению
 function prevImage() {
+    changeImage(-1);
+}
+
+function changeImage(direction) {
     resetTransform();
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    currentIndex = (currentIndex + direction + images.length) % images.length;
+
+    let newImageUrl = images[currentIndex];
     if (is3DMode) {
-        let newImageUrl = images[currentIndex];
-        // Извлекаем папку из URL
         let folderMatch = newImageUrl.match(/360\/([^\/]+)/);
-        if (folderMatch) {
-            currentFolder = folderMatch[1];
-        }
+        if (folderMatch) currentFolder = folderMatch[1];
+
         let fileName = newImageUrl.split('/').pop();
-        currentFrame = parseInt(fileName.split('.')[0]) || 17;
+        currentFrame = parseInt(fileName.split('.')[0]) || 100;
         preloadFrames(currentFolder);
-        modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${currentFrame}.gif')`;
-        modalImageName.textContent = fileName.split('.')[0];
+        modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${currentFrame}.webp')`;
+
+        if (modalImageName) modalImageName.textContent = fileName.split('.')[0];
     } else {
-        modalImageContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
-        modalImageName.textContent = images[currentIndex].split('/').pop().split('.')[0];
+        modalImageContainer.style.backgroundImage = `url('${newImageUrl}')`;
+        if (modalImageName) modalImageName.textContent = newImageUrl.split('/').pop().split('.')[0];
     }
 }
 
@@ -135,7 +127,7 @@ modalImageContainer.addEventListener("wheel", function (event) {
     this.style.transform = `scale(${Math.max(1, scale)})`;
 });
 
-// Перетаскивание
+// Перетаскивание обычного изображения
 modalImageContainer.addEventListener("mousedown", function (event) {
     if (is3DMode) return;
     isDragging = true;
@@ -196,7 +188,7 @@ function toggleBlocks(containerID, visibleCount = 5) {
     }
 }
 
-// Удаление расширений у названий
+// Удаление расширений у названий превью
 document.addEventListener("DOMContentLoaded", function () {
     const images = document.querySelectorAll(".image-name");
     images.forEach((img) => {
