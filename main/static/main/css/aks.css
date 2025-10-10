@@ -6,6 +6,12 @@
 	width: 100vw;
 	padding-bottom: 7vw;
 }
+#modal-image-container {
+    image-rendering: auto; /* или optimizeSpeed */
+    backface-visibility: hidden;
+    will-change: transform; /* подсказывает браузеру оптимизировать */
+}
+
 .General_aks
 {
 	width: 60vw;
