@@ -13,10 +13,13 @@ const modal = document.getElementById("modal");
 const modalImageContainer = document.getElementById("modal-image-container");
 const modalImageName = document.getElementById("modal-image-name");
 
+// Кеш для всех моделей: { folderName: [кадры] }
+let modelFrameCache = {};
+
 // Универсальная функция открытия модального окна
 function openModal(containerID, imageSrc, folder = null) {
     is3DMode = folder !== null;
-    if (is3DMode) currentFolder = folder;
+    currentFolder = is3DMode ? folder : null;
 
     const container = document.getElementById(containerID);
     images = Array.from(container.querySelectorAll('.aks_box_img')).map(img => {
@@ -35,6 +38,9 @@ function openModal(containerID, imageSrc, folder = null) {
     document.getElementById("modal-loader").style.display = "block";
 
     if (is3DMode) {
+        // Если кеш для этой модели уже есть — используем его, иначе создаём пустой
+        if (!modelFrameCache[currentFolder]) modelFrameCache[currentFolder] = [];
+
         preloadFrames(folder, () => {
             document.getElementById("modal-loader").style.display = "none";
             setup3DRotation(folder, fileName);
@@ -48,8 +54,16 @@ function openModal(containerID, imageSrc, folder = null) {
 function preloadFrames(folder, onComplete) {
     let loaded = 0;
     for (let i = 1; i <= totalFrames; i++) {
+        // Если кадр уже есть в кеше, пропускаем
+        if (modelFrameCache[folder][i]) {
+            loaded++;
+            if (loaded === totalFrames && typeof onComplete === "function") onComplete();
+            continue;
+        }
+
         const img = new Image();
         img.onload = img.onerror = () => {
+            modelFrameCache[folder][i] = img;
             loaded++;
             if (loaded === totalFrames && typeof onComplete === "function") onComplete();
         };
@@ -59,8 +73,39 @@ function preloadFrames(folder, onComplete) {
 
 // Настройка вращения 3D модели
 function setup3DRotation(folder, startingFile) {
-    currentFrame = parseInt(startingFile.split('.')[0]) || 100;
+    currentFrame = parseInt(startingFile.split('.')[0]) || 1;
     modalImageContainer.ondragstart = () => false;
+
+    function updateFrame(newFrame) {
+        if (newFrame < 1) newFrame = totalFrames;
+        if (newFrame > totalFrames) newFrame = 1;
+
+        currentFrame = newFrame;
+
+        // Используем кадр из кеша
+        if (!modelFrameCache[currentFolder][currentFrame]) {
+            const img = new Image();
+            img.src = `/static/main/img/360/${currentFolder}/${currentFrame}.webp`;
+            modelFrameCache[currentFolder][currentFrame] = img;
+        }
+
+        modalImageContainer.style.backgroundImage = `url('${modelFrameCache[currentFolder][currentFrame].src}')`;
+
+        bufferFrames(currentFrame);
+    }
+
+    function bufferFrames(centerFrame) {
+        for (let i = -5; i <= 5; i++) {
+            let frame = centerFrame + i;
+            if (frame < 1) frame += totalFrames;
+            if (frame > totalFrames) frame -= totalFrames;
+            if (!modelFrameCache[currentFolder][frame]) {
+                const img = new Image();
+                img.src = `/static/main/img/360/${currentFolder}/${frame}.webp`;
+                modelFrameCache[currentFolder][frame] = img;
+            }
+        }
+    }
 
     modalImageContainer.onmousedown = (e) => {
         e.preventDefault();
@@ -73,50 +118,50 @@ function setup3DRotation(folder, startingFile) {
 
         let delta = e.clientX - startX;
         let frameChange = Math.round(-delta / 20);
-        let newFrame = currentFrame + frameChange;
 
-        if (newFrame < 1) newFrame = totalFrames;
-        if (newFrame > totalFrames) newFrame = 1;
-
-        if (newFrame !== currentFrame) {
-            modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${newFrame}.webp')`;
-            currentFrame = newFrame;
+        if (frameChange !== 0) {
+            updateFrame(currentFrame + frameChange);
             startX = e.clientX;
         }
     };
 
-    window.onmouseup = () => isDragging = false;
+    window.onmouseup = () => {
+        isDragging = false;
+    };
+
+    // Первоначальная подгрузка буфера
+    updateFrame(currentFrame);
 }
 
 // Переключение изображений
-function nextImage() {
-    changeImage(1);
-}
-
-function prevImage() {
-    changeImage(-1);
-}
+function nextImage() { changeImage(1); }
+function prevImage() { changeImage(-1); }
 
 function changeImage(direction) {
     resetTransform();
     currentIndex = (currentIndex + direction + images.length) % images.length;
 
-    let newImageUrl = images[currentIndex];
+    const newImageUrl = images[currentIndex];
     if (is3DMode) {
-        let folderMatch = newImageUrl.match(/360\/([^\/]+)/);
+        const folderMatch = newImageUrl.match(/360\/([^\/]+)/);
         if (folderMatch) currentFolder = folderMatch[1];
 
-        let fileName = newImageUrl.split('/').pop();
-        currentFrame = parseInt(fileName.split('.')[0]) || 100;
-        preloadFrames(currentFolder);
-        modalImageContainer.style.backgroundImage = `url('/static/main/img/360/${currentFolder}/${currentFrame}.webp')`;
+        const fileName = newImageUrl.split('/').pop();
+        currentFrame = parseInt(fileName.split('.')[0]) || 1;
 
+        // Используем кеш, если есть
+        if (!modelFrameCache[currentFolder]) modelFrameCache[currentFolder] = [];
+        preloadFrames(currentFolder);
+
+        modalImageContainer.style.backgroundImage = `url('${modelFrameCache[currentFolder][currentFrame]?.src || `/static/main/img/360/${currentFolder}/${currentFrame}.webp`}')`;
         if (modalImageName) modalImageName.textContent = fileName.split('.')[0];
     } else {
         modalImageContainer.style.backgroundImage = `url('${newImageUrl}')`;
         if (modalImageName) modalImageName.textContent = newImageUrl.split('/').pop().split('.')[0];
     }
 }
+
+// Остальной код (масштабирование, перетаскивание, закрытие и т.д.) оставляем без изменений
 
 // Масштабирование
 modalImageContainer.addEventListener("wheel", function (event) {

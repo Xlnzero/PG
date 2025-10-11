@@ -131,7 +131,11 @@
 	background-repeat: no-repeat;
 	border-radius: 1vw;
 }
-
+#modal-image-container {
+    image-rendering: auto; /* или optimizeSpeed */
+    backface-visibility: hidden;
+    will-change: transform; /* подсказывает браузеру оптимизировать */
+}
 .logo-overlay {
     position: absolute;
     bottom: 2vw; /* Расположим сверху */
