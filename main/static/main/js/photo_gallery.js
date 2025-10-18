@@ -6,20 +6,22 @@ let startX = 0;
 let startY = 0;
 let currentFrame = 1;
 let currentFolder = null;
-
 const totalFrames = 100;
-
 const modal = document.getElementById("modal");
 const modalImageContainer = document.getElementById("modal-image-container");
 const modalImageName = document.getElementById("modal-image-name");
-
-// Кеш для всех моделей: { folderName: [кадры] }
-let modelFrameCache = {};
+let frameCache = []; // Кеш всех кадров текущей 3D модели
+let framesLoaded = false; // Флаг, что кадры подгружены
 
 // Универсальная функция открытия модального окна
 function openModal(containerID, imageSrc, folder = null) {
+    // Очистка старого кеша при открытии нового модального окна
+    frameCache = [];
+    framesLoaded = false;
+    isDragging = false;
+
     is3DMode = folder !== null;
-    currentFolder = is3DMode ? folder : null;
+    if (is3DMode) currentFolder = folder;
 
     const container = document.getElementById(containerID);
     images = Array.from(container.querySelectorAll('.aks_box_img')).map(img => {
@@ -38,10 +40,8 @@ function openModal(containerID, imageSrc, folder = null) {
     document.getElementById("modal-loader").style.display = "block";
 
     if (is3DMode) {
-        // Если кеш для этой модели уже есть — используем его, иначе создаём пустой
-        if (!modelFrameCache[currentFolder]) modelFrameCache[currentFolder] = [];
-
         preloadFrames(folder, () => {
+            framesLoaded = true;
             document.getElementById("modal-loader").style.display = "none";
             setup3DRotation(folder, fileName);
         });
@@ -54,20 +54,13 @@ function openModal(containerID, imageSrc, folder = null) {
 function preloadFrames(folder, onComplete) {
     let loaded = 0;
     for (let i = 1; i <= totalFrames; i++) {
-        // Если кадр уже есть в кеше, пропускаем
-        if (modelFrameCache[folder][i]) {
-            loaded++;
-            if (loaded === totalFrames && typeof onComplete === "function") onComplete();
-            continue;
-        }
-
         const img = new Image();
         img.onload = img.onerror = () => {
-            modelFrameCache[folder][i] = img;
             loaded++;
             if (loaded === totalFrames && typeof onComplete === "function") onComplete();
         };
         img.src = `/static/main/img/360/${folder}/${i}.webp`;
+        frameCache[i] = img; // сразу добавляем в кеш
     }
 }
 
@@ -77,38 +70,40 @@ function setup3DRotation(folder, startingFile) {
     modalImageContainer.ondragstart = () => false;
 
     function updateFrame(newFrame) {
+        if (!framesLoaded) return; // запрещаем вращение до полной загрузки
         if (newFrame < 1) newFrame = totalFrames;
         if (newFrame > totalFrames) newFrame = 1;
 
         currentFrame = newFrame;
 
         // Используем кадр из кеша
-        if (!modelFrameCache[currentFolder][currentFrame]) {
-            const img = new Image();
+        if (!frameCache[currentFrame]) {
+            let img = new Image();
             img.src = `/static/main/img/360/${currentFolder}/${currentFrame}.webp`;
-            modelFrameCache[currentFolder][currentFrame] = img;
+            frameCache[currentFrame] = img;
         }
 
-        modalImageContainer.style.backgroundImage = `url('${modelFrameCache[currentFolder][currentFrame].src}')`;
+        modalImageContainer.style.backgroundImage = `url('${frameCache[currentFrame].src}')`;
 
         bufferFrames(currentFrame);
     }
 
     function bufferFrames(centerFrame) {
-        for (let i = -5; i <= 5; i++) {
+        for (let i = -15; i <= 15; i++) { // увеличенный буфер
             let frame = centerFrame + i;
             if (frame < 1) frame += totalFrames;
             if (frame > totalFrames) frame -= totalFrames;
-            if (!modelFrameCache[currentFolder][frame]) {
-                const img = new Image();
+            if (!frameCache[frame]) {
+                let img = new Image();
                 img.src = `/static/main/img/360/${currentFolder}/${frame}.webp`;
-                modelFrameCache[currentFolder][frame] = img;
+                frameCache[frame] = img;
             }
         }
     }
 
     modalImageContainer.onmousedown = (e) => {
         e.preventDefault();
+        if (!framesLoaded) return; // блокируем перетаскивание
         isDragging = true;
         startX = e.clientX;
     };
@@ -125,43 +120,50 @@ function setup3DRotation(folder, startingFile) {
         }
     };
 
-    window.onmouseup = () => {
-        isDragging = false;
-    };
+    window.onmouseup = () => isDragging = false;
 
     // Первоначальная подгрузка буфера
     updateFrame(currentFrame);
 }
 
 // Переключение изображений
-function nextImage() { changeImage(1); }
-function prevImage() { changeImage(-1); }
+function nextImage() {
+    changeImage(1);
+}
+
+function prevImage() {
+    changeImage(-1);
+}
 
 function changeImage(direction) {
     resetTransform();
     currentIndex = (currentIndex + direction + images.length) % images.length;
+    let newImageUrl = images[currentIndex];
 
-    const newImageUrl = images[currentIndex];
     if (is3DMode) {
-        const folderMatch = newImageUrl.match(/360\/([^\/]+)/);
+        let folderMatch = newImageUrl.match(/360\/([^\/]+)/);
         if (folderMatch) currentFolder = folderMatch[1];
 
-        const fileName = newImageUrl.split('/').pop();
+        let fileName = newImageUrl.split('/').pop();
         currentFrame = parseInt(fileName.split('.')[0]) || 1;
 
-        // Используем кеш, если есть
-        if (!modelFrameCache[currentFolder]) modelFrameCache[currentFolder] = [];
-        preloadFrames(currentFolder);
+        // Показ loader при смене изображения
+        document.getElementById("modal-loader").style.display = "block";
+        frameCache = []; // очищаем старый кеш
+        framesLoaded = false;
+        isDragging = false;
 
-        modalImageContainer.style.backgroundImage = `url('${modelFrameCache[currentFolder][currentFrame]?.src || `/static/main/img/360/${currentFolder}/${currentFrame}.webp`}')`;
-        if (modalImageName) modalImageName.textContent = fileName.split('.')[0];
+        preloadFrames(currentFolder, () => {
+            framesLoaded = true;
+            document.getElementById("modal-loader").style.display = "none";
+            setup3DRotation(currentFolder, fileName);
+            if (modalImageName) modalImageName.textContent = fileName.split('.')[0];
+        });
     } else {
         modalImageContainer.style.backgroundImage = `url('${newImageUrl}')`;
         if (modalImageName) modalImageName.textContent = newImageUrl.split('/').pop().split('.')[0];
     }
 }
-
-// Остальной код (масштабирование, перетаскивание, закрытие и т.д.) оставляем без изменений
 
 // Масштабирование
 modalImageContainer.addEventListener("wheel", function (event) {
@@ -201,6 +203,9 @@ function closeModal() {
     is3DMode = false;
     resetTransform();
     modal.style.display = "none";
+    frameCache = []; // очищаем кеш при закрытии
+    framesLoaded = false;
+    isDragging = false;
 }
 
 function resetTransform() {
