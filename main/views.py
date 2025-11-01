@@ -106,17 +106,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def aks(request):
-    return dynamic_gallery(request, 'aks')
+    return osn_gallery(request, 'aks')
 
 
 
 
 def obj(request):
-    return dynamic_gallery(request, 'obj')
+    return osn_gallery(request, 'obj')
 
 
 def vid(request):
-    return dynamic_gallery(request, 'vid')
+    return osn_gallery(request, 'vid')
 
 def cat(request):
     title = 'Каталог ПАНГРАН'
@@ -171,7 +171,7 @@ def model(request):
         'hide_names': True,  # на этой странице убираем блок
         'menu': menu  # убедитесь, что переменная menu доступна
     }
-    return render(request, 'main/model2.html', context)
+    return render(request, 'main/model_360.html', context)
 
 
 def about_mo(request):
@@ -202,7 +202,7 @@ def update_od_model(request):
     return JsonResponse({'images': images_od_model})
 
 
-def dynamic_model(request, category):
+def pam_render_gallery(request, category):
     import os
     import re
 
@@ -247,7 +247,7 @@ def dynamic_model(request, category):
         'folders': zip(sorted_folders, display_folders),  # Передаем пару (реальное имя, отображаемое имя)
         'current_folder': folder
     }
-    return render(request, 'main/dynamic_model.html', context)
+    return render(request, 'main/pam_render_gallery.html', context)
 
 
 
@@ -264,7 +264,7 @@ def natural_key(filename):
     # Преобразуем числовые части в int, а текстовые – к нижнему регистру
     return [int(part) if part.isdigit() else part.lower() for part in parts]
 
-def dynamic_gallery(request, category):
+def osn_gallery(request, category):
     # Маппинг заголовка и основной папки
     title_map = {
         'aks': 'Аксессуары',
@@ -280,7 +280,7 @@ def dynamic_gallery(request, category):
     title = title_map.get(category, 'Категория не найдена')
     base_folder = base_path_map.get(category)
     if not base_folder:
-        return render(request, 'main/dynamic_gallery.html', {'title': title, 'gallery': []})
+        return render(request, 'main/osn_gallery.html', {'title': title, 'gallery': []})
 
     base_path = os.path.join(BASE_DIR, 'main', 'static', 'main', 'img', 'DRUG', base_folder)
 
@@ -304,6 +304,7 @@ def dynamic_gallery(request, category):
             'folder': sub,             # оригинальное имя папки (для формирования путей)
             'display_name': display_name,  # очищенное имя для отображения
             'images': images,
+            'route_name': category,  # ← вот это добавляем
         })
 
     context = {
@@ -313,6 +314,6 @@ def dynamic_gallery(request, category):
         'base_folder': base_folder,  # используется при формировании полного пути к файлам
     }
 
-    return render(request, 'main/dynamic_gallery.html', context)
+    return render(request, 'main/osn_gallery.html', context)
 
 

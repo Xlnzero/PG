@@ -26,14 +26,14 @@ urlpatterns = [
 
 
 
-    path('<str:category>_model/', views.dynamic_model, name='dynamic_model'),
+    path('<str:category>_model/', views.pam_render_gallery, name='pam_render_gallery'),
     path('update_od_model/', views.update_od_model, name='update_od_model'),
 
 
     path('contact/', views.contact_view, name='contact'),
 
 
-    path('<str:category>_gal/', views.dynamic_gallery, name='dynamic_gallery'),
+    path('<str:category>_gal/', views.osn_gallery, name='osn_gallery'),
 
 
 

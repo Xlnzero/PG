@@ -31,7 +31,7 @@
 {
 	color: black;
 	font-size: 1.5vw;
-	font-weight: normal;
+	font-weight: light;
 	
 }
 .slidenad2
@@ -180,13 +180,14 @@
 .contact > a > img
 {
 	display: block;
-	height: 3vw;
+	height: 4vw;
 	
 	
 }
 .contact > a
 {
 	margin: 1vw;
+
 	background: #ffffff;
 }
 .contact > a:hover

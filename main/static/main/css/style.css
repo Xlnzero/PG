@@ -4,13 +4,22 @@
     padding: 0;
 	box-sizing: border-box;
 	font-size: 1vw;
-	
+
 }
+@font-face {
+  font-family: 'Roboto';
+  src: url('/static/main/fonts/Roboto.ttf') format('truetype');
+  font-display: swap; /* показывать fallback, пока шрифт загружается */
+}
+
+
 a {
     text-decoration: none;
 	color: inherit;
 	cursor: pointer;
+
 }
+
 
 ::-webkit-scrollbar {
   width: 0;
@@ -31,20 +40,39 @@ body
 	color: white;
 	}
 
+.header0 {
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  background: #43444e;
+}
 
-.num
-{
-	
-	color: rgb(241, 193, 112);
-	position: relative;
-	width: 100%;
-	height: auto;
-	background: #43444e;
-	text-align: end;
-	padding:0.5vw;
-	display: block;
-	font-size: 1.3vw;
+.num {
+  display: flex;
+  justify-content: space-between; /* Раздвигает элементы по краям */
+  align-items: center;
+  padding: 0.5vw 1vw;
+  color: rgb(241, 193, 112);
 
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.num a {
+  color: rgb(241, 193, 112);
+  text-decoration: none;
+  white-space: nowrap; /* чтобы номера не переносились */
+  font-size: 1.8vw;
+
+}
+
+.num a:hover {
+text-decoration: none;
+}
+.num a:focus,
+.num a:active {
+  outline: none;              /* убирает фокусную рамку */
+  text-decoration: none;      /* убирает подчёркивание при клике */
 }
 
 .header
@@ -57,23 +85,19 @@ body
 	background: #2c2e36;
 	
 }
-.header0
-{
-	position: fixed;
-	z-index: 2;
-	width: 100%;
-}
+
 .header > div
 {
 	display: flex;
 	font-size: 1vw;
-	font-weight: lighter;
+
 
 	
 	
 }
 .logo
 {
+    cursor: pointer;
 	width: 20vw;
 	justify-content: center;
 	align-content: center;

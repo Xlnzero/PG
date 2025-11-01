@@ -1,0 +1,69 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    
+    <!-- Кнопки для переключения папок -->
+    <div class="aks">
+   <div class="OD_kn">
+    <ul>
+        {% for folder, display_name in folders %}
+            <li>
+                <a href="?folder={{ folder }}" class="OD_kn_a {% if current_folder == folder %}OD_kn_1{% endif %}">{{ display_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+		<div class="General_aks">
+    <div class="aks_catalog od_pam" id="container1">
+   {% for image in images %}
+        <div class="aks_box aks_box_img obj_box OD_box {% if forloop.counter > 5 %}hidden{% endif %}"
+             style="background-image: url('{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}');"
+             onclick="openModal('container1', '{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}')">
+             <div class="image-name">
+                 {{ image|slice:":-4" }} <!-- Обрезаем последние 4 символа для удаления расширения -->
+             </div>
+        </div>
+    {% endfor %}
+
+    <div id="el1" class="aks_osn" onclick="toggleBlocks('container1')">
+        <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
+    </div>
+</div>
+
+</div>
+
+		
+		
+</div>
+	
+	
+	<div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <div class="modal-image-container" id="modal-image-container" style="transform: scale(1); transition: transform 0.2s;">
+        <!-- Логотип поверх фонового изображения -->
+        <img src="{% static 'main/img/logo main 4.svg' %}" class="logo-overlay">
+    </div>
+    <div class="modal-image-name" id="modal-image-name"></div>
+    <button class="prev" onclick="prevImage()">&#10094;</button>
+    <button class="next" onclick="nextImage()">&#10095;</button>
+</div>
+
+
+
+
+
+  
+	
+</body>
+</html>
+{% endblock %}
