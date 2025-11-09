@@ -40,9 +40,9 @@ for html in html_files:
         unused.append(html)
 
 # === РЕЗУЛЬТАТ ===
-print("\n🔍 Неиспользуемые шаблоны:\n")
+print("\nНеиспользуемые шаблоны:\n")
 if unused:
     for f in sorted(unused):
         print(f" - {f}")
 else:
-    print("✅ Все шаблоны используются!")
+    print("Все шаблоны используются!")

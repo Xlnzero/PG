@@ -23,11 +23,12 @@ import re  # Добавляем импорт модуля регулярных �
 menu = [
     {'name': 'Главная', 'route_name': 'home'},
     {'name': 'О компании', 'route_name': 'about'},
-    {'name': 'Памятники', 'route_name': 'pam'},
-    {'name': 'Аксессуары', 'route_name': 'aks'},  # Указываем только категорию, без '_gal'
-    {'name': 'Наши работы', 'route_name': 'obj'},
+    {'name': 'ПАМЯТНИКИ', 'route_name': 'pam'},
+    {'name': 'Аксессуары', 'route_name': 'aks'},
+    {'name': 'Наши работы', 'route_name': 'pam_got'},
     {'name': 'Виды гранита', 'route_name': 'vid'},
 ]
+
 
 
 
@@ -35,6 +36,7 @@ menu = [
 def contact_view(request):
     title = 'Заявка на звонок'
     success_message = None
+    error_message = None
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -45,18 +47,18 @@ def contact_view(request):
                 send_mail(
                     "Новая заявка с сайта",
                     f"ФИО: {full_name}\nТелефон: {phone}",
-                    "xlnzeroeva@gmail.com",
-                    ["xlnzeroeva@gmail.com"],
+                    "pangran@bk.ru",
+                    ["pangran@bk.ru"],
                     fail_silently=False,
                 )
                 success_message = "Ваше сообщение отправлено!"
+                form = ContactForm()  # Очищаем форму после успешной отправки
             except Exception as e:
-                print(f"Ошибка при отправке письма: {e}")
-
-            form = ContactForm()
+                logger.error(f"Ошибка при отправке письма: {e}")
+                error_message = "Сообщение не отправлено. Проверьте не включен ли у вас VPN. Или позвоните нам на прямую +375 29 2222 759"
     else:
         form = ContactForm()
-    return render(request, "main/contact.html", context={'menu': menu, 'title': title, "form": form, "success_message": success_message})
+    return render(request, "main/contact.html", context={'menu': menu, 'title': title, "form": form, "success_message": success_message, "error_message": error_message})
 
 
 
@@ -83,25 +85,82 @@ def pam(request):
     title = get_title_from_menu(menu, 'pam')
     return render(request, 'main/pam.html', context={'menu': menu, 'title': title})
 
+def pam_got(request):
+    title = get_title_from_menu(menu, 'pam_got')
+    return render(request, 'main/pam_got.html', context={'menu': menu, 'title': title})
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+import os
+import re
+from django.conf import settings
+from django.shortcuts import render
 
+def pam_got_gallery(request, category):
+    # Маппинг для заголовков
 
+    title_map = {
+        'zv': 'Цветники',
+        'od': 'Одиночные памятники',
+        'pol': 'Полуторные памятники',
+        'dv': 'Двойные памятники',
+        'vip': 'Эксклюзивные памятники',
+    }
 
+    title = title_map.get(category, 'Категория не найдена')
 
+    # Путь к базовой папке
+    folder_base_path = os.path.join(
+        settings.BASE_DIR, 'main', 'static', 'main', 'img', 'PAM_got', category
+    )
 
+    if not os.path.exists(folder_base_path):
+        return render(request, 'main/pam_got_gallery.html', {
+            'title': title,
+            'gallery': [],
+            'base_folder': category,
+        })
 
+    # Список подпапок
+    all_folders = [
+        f for f in os.listdir(folder_base_path)
+        if os.path.isdir(os.path.join(folder_base_path, f))
+    ]
 
+    # Сортировка по числу в начале
+    def folder_key(name):
+        m = re.match(r'(\d+)', name)
+        return int(m.group(1)) if m else 9999
 
+    sorted_folders = sorted(all_folders, key=folder_key)
 
+    gallery = []
+    for folder in sorted_folders:
+        folder_path = os.path.join(folder_base_path, folder)
+        images = [
+            f for f in os.listdir(folder_path)
+            if os.path.isfile(os.path.join(folder_path, f))
+        ]
+        # сортировка картинок по числу в имени
+        images.sort(key=lambda x: int(re.sub(r'\D', '', os.path.splitext(x)[0]) or 0))
 
+        display_name = re.sub(r'^\d+\s*', '', folder)
 
+        gallery.append({
+            'folder': folder,
+            'display_name': display_name,
+            'images': images,
+            'route_name': category,  # если нужно для условия в шаблоне
+        })
 
-
-
-
-
+    context = {
+        'title': title,
+        'gallery': gallery,
+        'base_folder': category,
+        'menu': menu,
+    }
+    return render(request, 'main/pam_got_gallery.html', context)
 
 
 
@@ -200,6 +259,8 @@ def update_od_model(request):
     # Сортируем изображения по числовому значению
     images_od_model.sort(key=lambda x: int(os.path.splitext(x)[0]))
     return JsonResponse({'images': images_od_model})
+
+
 
 
 def pam_render_gallery(request, category):

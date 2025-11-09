@@ -1,7 +1,15 @@
-import sys, os
+import sys
+import os
 
 # Полный путь до директории проекта на сервере
-sys.path.insert(0, '/home/pangranby/pangran')
+# ВАЖНО: Измените этот путь на реальный путь на вашем сервере!
+project_dir = '/home/pangranby/pangran'
+sys.path.insert(0, project_dir)
+
+# Загружаем переменные окружения из .env файла
+from dotenv import load_dotenv
+env_path = os.path.join(project_dir, '.env')
+load_dotenv(env_path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pangran.settings'
 

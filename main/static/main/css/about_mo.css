@@ -82,7 +82,7 @@
     position: absolute;
     top: 0.5vw; /* Располагаем в правом верхнем углу */
     right: 0.5vw; /* Отступ справа */
-    background: #FFFFFF; /* Белый фон */
+    background: #fff4e6; /* Белый фон */
     color: black; /* Черный текст */
     padding: 0.5vw 1vw; /* Внутренние отступы */
     font-size: 1vw; /* Размер шрифта */

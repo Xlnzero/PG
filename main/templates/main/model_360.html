@@ -5,22 +5,18 @@
 <div class="aks">
     <div class="General_aks">
         <div class="aks_name">
-            Последние 3D модели
+            3D МОДЕЛИ
             <div class="svg_360"></div>
         </div>
         <div class="aks_catalog" id="container1">
             {% for folder in folders %}
-                <div class="aks_box aks_box_img obj_box {% if forloop.counter > 5 %}hidden{% endif %}"
+                <div class="aks_box aks_box_img obj_box }"
                      style="background-image: url('{% static "main/img/360/" %}{{ folder }}/17.webp');"
                      onclick="openModal('container1', '{% static 'main/img/360/' %}{{ folder }}/17.webp', '{{ folder }}')">
                     <div class="image-name">{{ folder }}</div>
                 </div>
             {% endfor %}
-            {% if folders|length > 5 %}
-                <div id="el1" class="aks_osn aks_osn2" onclick="toggleBlocks('container1')">
-                    <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
-                </div>
-            {% endif %}
+
 
         </div>
     </div>

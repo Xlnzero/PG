@@ -1,0 +1,138 @@
+.pam_osn_do
+{
+display: block;
+height: 10vw;
+}
+
+.pam_osn_block_0
+{
+
+
+
+          display: flex;
+          justify-content: center; /* центрируем по горизонтали */
+          align-items: center;     /* центрируем по вертикали */
+          margin-bottom: 2vw;
+
+}
+.pam_osn_block_1
+{
+	  display: grid;
+      grid-template-columns: repeat(3, 20vw); /* 3 колонки фиксированной ширины */
+      grid-template-rows: repeat(2, 20vw);    /* 2 ряда фиксированной высоты */
+      gap: 2vw; /* отступы между блоками */
+}
+.pam_osn_block_2
+{
+
+      overflow: hidden;
+      border-radius: 0.3vw;
+      box-shadow: 0 1vw 1vw rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0vw; /* отступы между блоками */
+        cursor: pointer;
+
+
+
+
+}
+.pam_osn_block_2_360
+{
+
+      overflow: hidden;
+      border-radius: 0.3vw;
+      box-shadow: 0 1vw 1vw rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0vw; /* отступы между блоками */
+        cursor: pointer;
+position: relative;
+      height: 100vh;
+      background-color: #f0f0f0;
+
+
+
+
+
+
+}
+
+
+
+.overlay-area_360
+{
+flex:3;
+display: grid;
+grid-area: 1 / 1 / 2 / 2; /* первая строка */
+
+}
+.overlay-area_360:hover > div{
+    background-size: 103%;
+    filter: blur(0px);
+    opacity: 0.9;
+
+}
+
+.block_background_for_360_1
+{
+      grid-row: 1;
+      grid-column: 1;
+      z-index: 1;
+      background-image: url("/static/main/img/PAM_prev/1.png");
+
+ }
+
+.block_background_for_360_2
+{
+    background-image: url("/static/main/img/PAM_prev/0.png");
+    grid-row: 1;
+    grid-column: 1;
+    z-index: 2;
+    background-size: 100%;
+    filter: blur(0px);
+    opacity: 0.9;
+    background-position: center;
+    transition: ease 0.5s;
+      }
+
+
+
+.block_background:hover {
+    background-size: 103%;
+    filter: blur(0px);
+    opacity: 0.9;
+
+}
+
+.block_background
+{
+background-position: center;
+flex: 3;
+opacity: 0.5;
+filter: blur(1px);
+background-size: 100%;
+transition: ease 0.5s;
+}
+.block_background_1 {background-image: url("/static/main/img/PAM_prev/1.png");}
+.block_background_2 {background-image: url("/static/main/img/PAM_prev/2.png");}
+.block_background_3 {background-image: url("/static/main/img/PAM_prev/3.png");}
+.block_background_4 {background-image: url("/static/main/img/PAM_prev/4.png");}
+.block_background_5 {background-image: url("/static/main/img/PAM_prev/5.png");}
+.block_background_6 {background-image: url("/static/main/img/PAM_prev/6.png");}
+
+
+
+.block_name
+{
+    flex: 1;
+    display: flex;
+    width: 100%;
+    align-items: center;     /* центрируем по вертикали */
+    justify-content: center; /* центрируем по горизонтали */
+    background: #43444e;
+    height: 5vw;
+    border-top: solid 0.1vw;
+
+
+}

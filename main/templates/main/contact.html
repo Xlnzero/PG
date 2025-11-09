@@ -3,21 +3,97 @@
 {% load static %}
 
 <style>
-    .success-message {
+    .form-container {
+
+        max-width: 500px;
+        margin: auto;
+
+        padding: 9vw;
+    }
+    .form-container h2 {
+        color: wheat;
+        text-align: center;
+        margin-bottom: 2vw;
+    }
+    .form-container label {
+        display: block;
+        color: wheat;
+        margin-bottom: 0.5vw;
+    }
+    .form-container input {
+        width: 100%;
+        padding: 0.8vw;
+        margin-bottom: 1.5vw;
+        background: #4e4e57;
+        color: wheat;
+        border: 1px solid #666;
+        box-sizing: border-box;
+    }
+    .form-container button {
+        width: 100%;
+        padding: 1vw;
+        background: #333;
+        color: wheat;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1vw;
+    }
+    .form-container button:hover {
+        background: #444;
+    }
+    .success-message, .error-message {
         display: block;
         color: wheat;
         font-weight:300;
-       
-       
-		height: 39vw;
-  
-        padding-top: 20vw;
+        padding: 2vw;
         text-align: center;
+        margin: 2vw auto;
+        max-width: 600px;
+    }
+    .error-message {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid #ff6b6b;
+        border-radius: 5px;
+    }
+    .success-message {
+        color: #4caf50;
+        background: rgba(76, 175, 80, 0.1);
+        border: 1px solid #4caf50;
+        border-radius: 5px;
     }
 </style>
+
+<div class="form-container">
+    <h2>Закажите звонок</h2>
+    <form method="post" action="{% url 'contact' %}">
+        {% csrf_token %}
+        <label for="id_full_name">ФИО:</label>
+        <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}" required>
+
+        <label for="id_phone">Номер телефона:</label>
+        <input type="text" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}" required>
+
+        <button type="submit">Отправить</button>
+    </form>
+</div>
  
 {% if success_message %}
-    <p class="success-message">Ваше сообщение отравлено, мы вам перезвоним</p>
+    <p class="success-message">Ваше сообщение отправлено, мы вам перезвоним</p>
+{% endif %}
+
+{% if error_message %}
+    <p class="error-message">{{ error_message }}</p>
+{% endif %}
+
+{% if form.errors %}
+    <div class="error-message" style="max-width: 600px; margin: 1vw auto;">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
 {% endif %}
 
 {% endblock %}

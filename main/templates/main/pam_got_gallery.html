@@ -7,14 +7,10 @@
     <div class="General_aks">
         <div class="aks_name">{{ section.display_name }}</div>
         <div class="aks_catalog" id="container{{ forloop.counter }}">
-            <!-- Внутренний цикл -->
             {% for image in section.images %}
-                <div class="aks_box aks_box_img obj_box
-                     {% if section.route_name != 'vid' and forloop.counter > 6 %}
-                         hidden
-                     {% endif %}"
-                     style="background-image: url('{% static "main/img/DRUG/" %}{{ base_folder }}/{{ section.folder }}/{{ image }}');"
-                     onclick="openModal('container{{ forloop.parentloop.counter }}', '{% static "main/img/DRUG/" %}{{ base_folder }}/{{ section.folder }}/{{ image }}')">
+                <div class="aks_box aks_box_img obj_box"
+                     style="background-image: url('{% static "main/img/PAM_got/" %}{{ base_folder }}/{{ section.folder }}/{{ image }}');"
+                     onclick="openModal('container{{ forloop.parentloop.counter }}', '{% static "main/img/PAM_got/" %}{{ base_folder }}/{{ section.folder }}/{{ image }}')">
                     <div class="image-name">{{ image }}</div>
                 </div>
             {% endfor %}

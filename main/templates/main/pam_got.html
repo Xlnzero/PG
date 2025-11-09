@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<div class="pam_osn_do"></div>
+
+<div class="pam_osn_block_0">
+  <div class="pam_osn_block_1">
+
+    <div class="pam_osn_block_2"
+         onclick="window.location.href='{% url 'pam_got_gallery' category='zv' %}'">
+      <div class="block_background block_background_got_1"></div>
+      <div class="block_name">ЦВЕТНИКИ</div>
+    </div>
+
+    <div class="pam_osn_block_2"
+         onclick="window.location.href='{% url 'pam_got_gallery' category='od' %}'">
+      <div class="block_background block_background_got_2"></div>
+      <div class="block_name">ОДИНОЧНЫЕ</div>
+    </div>
+
+    <div class="pam_osn_block_2"
+         onclick="window.location.href='{% url 'pam_got_gallery' category='pol' %}'">
+      <div class="block_background block_background_got_3"></div>
+      <div class="block_name">ПОЛУТОРНЫЕ</div>
+    </div>
+
+    <div class="pam_osn_block_2"
+         onclick="window.location.href='{% url 'pam_got_gallery' category='dv' %}'">
+      <div class="block_background block_background_got_4"></div>
+      <div class="block_name">ДВОЙНЫЕ</div>
+    </div>
+
+    <div class="pam_osn_block_2"
+         onclick="window.location.href='{% url 'pam_got_gallery' category='vip' %}'">
+      <div class="block_background block_background_got_5"></div>
+      <div class="block_name">ЭКСКЛЮЗИВНЫЕ</div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

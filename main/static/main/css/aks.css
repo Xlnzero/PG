@@ -34,8 +34,8 @@
     display: flex;
     align-items: center; /* Выровнять по центру по вертикали */
     width: 5vw; /* Задаем фиксированную ширину для SVG */
-    height: 2vw; /* Задаем фиксированную высоту для SVG */
-    background: url("../img/Ресурс 1.svg");
+    height: 4vw; /* Задаем фиксированную высоту для SVG */
+    background: url("../img/360.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center; /* Центрировать изображение */

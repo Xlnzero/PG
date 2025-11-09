@@ -26,7 +26,7 @@
 		<div class="General_aks">
     <div class="aks_catalog od_pam" id="container1">
    {% for image in images %}
-        <div class="aks_box aks_box_img obj_box OD_box {% if forloop.counter > 5 %}hidden{% endif %}"
+        <div class="aks_box aks_box_img obj_box OD_box {% if forloop.counter > 20 %}hidden{% endif %}"
              style="background-image: url('{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}');"
              onclick="openModal('container1', '{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}')">
              <div class="image-name">
