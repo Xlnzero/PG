@@ -73,8 +73,15 @@ def get_title_from_menu(menu, current_route_name):
 
 
 def index(request):
-    title = get_title_from_menu(menu, 'home')
-    return render(request, 'main/index.html', context={'menu': menu, 'title': title})
+    title = "ПАМЯТНИКИ | ПАНГРАН"
+    description = "Памятники из натурального камня. Собственное производство. Доставка и установка по всей Беларуси."
+
+    return render(request, 'main/index.html', {
+        'menu': menu,
+        'title': title,
+        'description': description
+    })
+
 
 
 def about(request):

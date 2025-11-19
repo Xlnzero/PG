@@ -15,13 +15,43 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.contrib.sitemaps.views import sitemap
+from django.urls import include, path
+from django.views.generic import TemplateView
+
+from main.sitemaps import (
+    OsnGallerySitemap,
+    PamGotGallerySitemap,
+    PamRenderGallerySitemap,
+    StaticViewSitemap,
+)
 from main.views import page_not_found
+
+sitemaps = {
+    "static": StaticViewSitemap,
+    "pam_got": PamGotGallerySitemap,
+    "pam_render": PamRenderGallerySitemap,
+    "osn_gallery": OsnGallerySitemap,
+}
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls'))
+    path('', include('main.urls')),
+    path(
+        'robots.txt',
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain",
+        ),
+        name='robots-txt',
+    ),
+    path(
+        'sitemap.xml',
+        sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap',
+    ),
 
 ]
 
