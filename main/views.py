@@ -25,7 +25,7 @@ menu = [
     {'name': 'О компании', 'route_name': 'about'},
     {'name': 'ПАМЯТНИКИ', 'route_name': 'pam'},
     {'name': 'Аксессуары', 'route_name': 'aks'},
-    {'name': 'Наши работы', 'route_name': 'pam_got'},
+    {'name': 'Примеры работ', 'route_name': 'pam_got'},
     {'name': 'Виды гранита', 'route_name': 'vid'},
 ]
 
@@ -113,6 +113,7 @@ def pam_got_gallery(request, category):
         'pol': 'Полуторные памятники',
         'dv': 'Двойные памятники',
         'vip': 'Эксклюзивные памятники',
+        'dr': 'Другое',
     }
 
     title = title_map.get(category, 'Категория не найдена')

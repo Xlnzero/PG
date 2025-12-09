@@ -26,18 +26,16 @@
 		<div class="General_aks">
     <div class="aks_catalog od_pam" id="container1">
    {% for image in images %}
-        <div class="aks_box aks_box_img obj_box OD_box {% if forloop.counter > 20 %}hidden{% endif %}"
+        <div class="aks_box aks_box_img obj_box OD_box"
              style="background-image: url('{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}');"
              onclick="openModal('container1', '{% static "main/img/PAM/" %}{{ category }}/{{ current_folder }}/{{ image }}')">
              <div class="image-name">
-                 {{ image|slice:":-4" }} <!-- Обрезаем последние 4 символа для удаления расширения -->
+                 {{ image|slice:":-5" }} <!-- Обрезаем последние 4 символа для удаления расширения -->
              </div>
         </div>
     {% endfor %}
 
-    <div id="el1" class="aks_osn" onclick="toggleBlocks('container1')">
-        <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
-    </div>
+
 </div>
 
 </div>
