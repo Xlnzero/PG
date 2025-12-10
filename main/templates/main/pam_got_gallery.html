@@ -15,12 +15,7 @@
                 </div>
             {% endfor %}
 
-            {% if section.route_name != 'vid' and section.images|length > 5 %}
-                <div id="el{{ forloop.counter }}" class="aks_osn aks_osn2"
-                     onclick="toggleBlocks('container{{ forloop.counter }}')">
-                    <p class="toggle-btn">ПОКАЗАТЬ ВСЕ</p>
-                </div>
-            {% endif %}
+
         </div>
     </div>
     {% endfor %}
