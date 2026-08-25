@@ -30,7 +30,11 @@ function openModal(containerID, imageSrc, folder = null) {
     });
 
     const fileName = imageSrc.split('/').pop();
-    currentIndex = images.findIndex(url => url.split('/').pop() === fileName);
+
+    // ИСПРАВЛЕНО: раньше индекс искался по имени файла (fileName),
+    // из-за чего все 360-модели с одинаковым превью (17.webp) находили
+    // всегда первое совпадение в массиве. Теперь сравниваем полный путь.
+    currentIndex = images.findIndex(url => url === imageSrc);
     if (currentIndex === -1) currentIndex = 0;
 
     modal.style.display = "flex";
