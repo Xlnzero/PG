@@ -208,8 +208,9 @@ def model(request):
     # Получаем список папок внутри base_folder_360
     folders = sorted(
         [f for f in os.listdir(base_folder_360) if os.path.isdir(os.path.join(base_folder_360, f))],
-        key=lambda x: x  # либо natural_key(x) если в названиях папок есть числа
-    )
+        key=natural_key,
+        reverse=True  # новые папки будут первыми
+          )
 
     # Для каждой папки из 360 выбираем превью – например, 17-е фото (при условии, что нумерация начинается с 0 -> индекс 16)
     preview_index = 16
