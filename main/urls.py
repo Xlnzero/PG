@@ -1,7 +1,7 @@
 from django.urls import path, re_path, register_converter
 from . import views
-from django.urls import path
-from django.urls import path
+
+from django.urls import path, include
 
 
 
@@ -32,7 +32,7 @@ urlpatterns = [
 
 
     path('<str:category>_gal/', views.osn_gallery, name='osn_gallery'),
-
+    path('', include('news.urls')),
 
 
 

@@ -1,0 +1,11 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content %}
+<article class="news-post" style="max-width: 800px; margin: 0 auto 60px; padding: 160px 20px 0; font-size: 18px; line-height: 1.6;">
+    <h1 style="font-size: 32px; margin-bottom: 10px;">{{ post.title }}</h1>
+    <time style="display:block; color:#888; margin-bottom: 20px;" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:'d.m.Y' }}</time>
+    <img src="{{ post.photo.url }}" alt="{{ post.title }}" style="max-width:100%; height:auto; display:block; margin-bottom: 20px;">
+    <div class="news-text">{{ post.text|linebreaks }}</div>
+</article>
+{% endblock %}
