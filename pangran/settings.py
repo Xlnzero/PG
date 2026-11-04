@@ -173,3 +173,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@example.com'
 # ==============================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHANNEL_ID = os.environ.get("TELEGRAM_CHANNEL_ID", "")

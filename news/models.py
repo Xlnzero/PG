@@ -2,6 +2,20 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
+RU_TO_LAT = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+    'і': 'i', 'ў': 'u',  # белорусские буквы
+}
+
+
+def make_slug(text):
+    """Русский и белорусский текст -> латинский слаг для адреса страницы."""
+    latin = ''.join(RU_TO_LAT.get(ch, ch) for ch in text.lower())
+    return slugify(latin)[:150]
 
 class Post(models.Model):
     STATUS_CHOICES = [
@@ -43,7 +57,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title or self.text[:50], allow_unicode=True)
+            base_slug = make_slug(self.title or self.text[:50]) or 'post'
             self.slug = f"{base_slug}-{int(timezone.now().timestamp())}"
         super().save(*args, **kwargs)
 
