@@ -36,41 +36,46 @@ def handle_channel_post(msg):
     caption = (msg.get("caption") or msg.get("text") or "").strip()
     photo_sizes = msg.get("photo")
 
+    # Фото скачиваем ДО записи в базу, чтобы не держать базу занятой
+    content = None
+    unique_id = None
+    if photo_sizes:
+        biggest = photo_sizes[-1]  # самый большой размер
+        unique_id = biggest["file_unique_id"]
+        content = _download_photo(biggest["file_id"])
+
+    title, _, rest = caption.partition("\n")
+    defaults = dict(
+        title=title.strip()[:200],
+        text=rest.strip(),
+        created_at=datetime.fromtimestamp(msg["date"], tz=dt_timezone.utc),
+        status="published",
+        source="telegram",
+        telegram_message_id=message_id,
+        telegram_chat_id=chat_id,
+        published_to_telegram=True,  # пост уже лежит в канале
+    )
+
     with transaction.atomic():
-        post = None
         if group_id:
-            post = Post.objects.filter(telegram_chat_id=chat_id,
-                                       telegram_media_group_id=group_id).first()
+            # get_or_create + уникальный номер альбома = один пост на альбом
+            post, created = Post.objects.get_or_create(
+                telegram_media_group_id=group_id, defaults=defaults)
+        else:
+            if Post.objects.filter(telegram_message_id=message_id).exists():
+                return "пропущено: уже обработан"
+            post = Post.objects.create(**defaults)
+            created = True
 
-        if post is None and Post.objects.filter(telegram_message_id=message_id).exists():
-            return "пропущено: уже обработан"
-
-        if post is None:
-            title, _, rest = caption.partition("\n")
-            post = Post.objects.create(
-                title=title.strip()[:200],
-                text=rest.strip(),
-                created_at=datetime.fromtimestamp(msg["date"], tz=dt_timezone.utc),
-                status="published",
-                source="telegram",
-                telegram_message_id=message_id,
-                telegram_chat_id=chat_id,
-                telegram_media_group_id=group_id,
-                published_to_telegram=True,  # пост уже лежит в канале
-            )
-        elif caption and not post.title:
+        if not created and caption and not post.title:
             # подпись альбома может прийти не с первым фото
-            title, _, rest = caption.partition("\n")
-            post.title = title.strip()[:200]
-            post.text = rest.strip()
+            post.title = defaults["title"]
+            post.text = defaults["text"]
             post.save()
 
-        if photo_sizes:
-            biggest = photo_sizes[-1]  # самый большой размер
-            unique_id = biggest["file_unique_id"]
+        if content is not None:
             if post.photos.filter(telegram_file_unique_id=unique_id).exists():
                 return "пропущено: это фото уже есть"
-            content = _download_photo(biggest["file_id"])
             photo = PostPhoto(post=post, order=post.photos.count(),
                               telegram_file_unique_id=unique_id)
             photo.image.save(f"tg_{unique_id}.jpg", ContentFile(content), save=True)

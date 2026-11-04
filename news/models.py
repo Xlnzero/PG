@@ -41,7 +41,7 @@ class Post(models.Model):
     # Telegram: откуда пришёл пост и опубликован ли он в канале
     telegram_message_id = models.BigIntegerField(unique=True, null=True, blank=True)
     telegram_chat_id = models.BigIntegerField(null=True, blank=True)
-    telegram_media_group_id = models.CharField(max_length=64, null=True, blank=True, db_index=True)
+    telegram_media_group_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
     published_to_telegram = models.BooleanField(default=False)
 
     # Instagram
