@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     path('news/<slug:slug>/', views.post_detail, name='news_detail'),
     path('telegram/webhook/', views.telegram_webhook, name='telegram_webhook'),
+    path('news/', views.post_list, name='news_list'),
 ]

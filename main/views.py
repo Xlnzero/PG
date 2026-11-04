@@ -27,6 +27,7 @@ menu = [
     {'name': 'Аксессуары', 'route_name': 'aks'},
     {'name': 'Примеры работ', 'route_name': 'pam_got'},
     {'name': 'Виды гранита', 'route_name': 'vid'},
+    {'name': 'Новости', 'route_name': 'news_list'},
 ]
 
 

@@ -3,6 +3,8 @@ from .models import Post
 import hmac
 import json
 import logging
+from main.views import menu
+from django.core.paginator import Paginator
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
@@ -18,8 +20,9 @@ def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     return render(request, 'news/post_detail.html', {
         'post': post,
-        'title': post.title,
-        'description': post.text[:160],
+        'menu': menu,
+        'title': post.title or 'Новость',
+        'description': (post.text or post.title)[:160],
     })
 
 @csrf_exempt
@@ -43,3 +46,13 @@ def telegram_webhook(request):
         except Exception:
             logger.exception("telegram webhook: ошибка обработки поста")
     return HttpResponse("ok")
+
+def post_list(request):
+    posts = Post.objects.filter(status='published').prefetch_related('photos')
+    page = Paginator(posts, 12).get_page(request.GET.get('page'))
+    return render(request, 'news/post_list.html', {
+        'page': page,
+        'menu': menu,
+        'title': 'Новости Pangran',
+        'description': 'Новости и новые работы Pangran в Гродно.',
+    })
