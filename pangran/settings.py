@@ -186,3 +186,8 @@ if _env_file.exists():
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHANNEL_ID = os.environ.get("TELEGRAM_CHANNEL_ID", "")
 TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://pangran.by",
+    "https://www.pangran.by",
+]
