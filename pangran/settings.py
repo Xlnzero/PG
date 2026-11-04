@@ -174,6 +174,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@example.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# --- секреты из файла .env (самого файла в git нет) ---
+_env_file = BASE_DIR / ".env"
+if _env_file.exists():
+    for _line in _env_file.read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _key, _value = _line.split("=", 1)
+            os.environ.setdefault(_key.strip(), _value.strip().strip('"').strip("'"))
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHANNEL_ID = os.environ.get("TELEGRAM_CHANNEL_ID", "")
+TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
