@@ -191,3 +191,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://pangran.by",
     "https://www.pangran.by",
 ]
+
+INSTAGRAM_ACCESS_TOKEN = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "")
+INSTAGRAM_USER_ID = os.environ.get("INSTAGRAM_USER_ID", "")
+SITE_URL = os.environ.get("SITE_URL", "https://pangran.by")

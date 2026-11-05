@@ -47,6 +47,8 @@ class Post(models.Model):
     # Instagram
     instagram_media_id = models.CharField(max_length=100, null=True, blank=True)
     published_to_instagram = models.BooleanField(default=False)
+    instagram_error = models.TextField(blank=True, default='')
+    last_photo_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']

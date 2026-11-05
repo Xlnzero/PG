@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timezone as dt_timezone
-
+from django.utils import timezone
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
@@ -79,5 +79,6 @@ def handle_channel_post(msg):
             photo = PostPhoto(post=post, order=post.photos.count(),
                               telegram_file_unique_id=unique_id)
             photo.image.save(f"tg_{unique_id}.jpg", ContentFile(content), save=True)
-
+            post.last_photo_at = timezone.now()
+            post.save(update_fields=["last_photo_at"])
     return f"ок: пост #{post.pk}, фото: {post.photos.count()}"
