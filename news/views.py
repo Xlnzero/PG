@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+﻿from django.shortcuts import render, get_object_or_404
 from .models import Post
 import hmac
 import json
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def post_detail(request, slug):
-    post = get_object_or_404(Post, slug=slug)
+    post = get_object_or_404(Post, slug=slug, status='published')
     return render(request, 'news/post_detail.html', {
         'post': post,
         'menu': menu,
