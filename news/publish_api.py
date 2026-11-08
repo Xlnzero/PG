@@ -78,3 +78,28 @@ def send_telegram(post, caption):
     j = r.json()
     if not j.get("ok"):
         raise RuntimeError("Telegram: " + str(j.get("description")))
+
+
+@csrf_exempt
+@require_POST
+def api_notify(request):
+    """Сообщение в служебную группу Telegram. Защита: тот же секрет."""
+    secret = os.environ.get("PUBLISH_API_SECRET", "")
+    got = request.headers.get("X-Publish-Secret", "")
+    if not secret or not hmac.compare_digest(got.encode("utf-8"), secret.encode("utf-8")):
+        return JsonResponse({"ok": False, "error": "forbidden"}, status=403)
+    token = settings.TELEGRAM_BOT_TOKEN
+    chat = os.environ.get("TELEGRAM_NOTIFY_CHAT_ID", "")
+    text = request.POST.get("text", "").strip()[:4000]
+    if not (token and chat and text):
+        return JsonResponse({"ok": False, "error": "нет токена, chat id или текста"}, status=400)
+    try:
+        r = requests.post("https://api.telegram.org/bot" + token + "/sendMessage",
+                          data={"chat_id": chat, "text": text}, timeout=30)
+        j = r.json()
+    except Exception as e:
+        return JsonResponse({"ok": False, "error": str(e).replace(token, "***")[:300]}, status=502)
+    if not j.get("ok"):
+        return JsonResponse({"ok": False, "error": str(j.get("description")),
+                             "migrate_to": (j.get("parameters") or {}).get("migrate_to_chat_id")}, status=502)
+    return JsonResponse({"ok": True})
